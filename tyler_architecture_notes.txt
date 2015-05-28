@@ -1,0 +1,50 @@
+Architectural notes for traffic simulator
+
+Car class
+    source (point along an edge)
+    destination
+    state (crashed/operational/parked/others?)
+    current speed limit
+    speed
+
+Use driver class?
+how to be efficient (time/memory)
+
+Street Light Set class
+    method for turn signal timing (both turn signals at once, or at the beginning/end)
+    turn lanes
+    may or may not have turn lights
+    may or may not have walk signals
+    car counter (how many cars passed through in green, yellow, red)
+
+pedestrian class
+    include social tendencies for multiple people to be in groups?
+    walking speed
+    distraction cost/delay
+
+Intersection class
+    can contain street light set
+    Can contain walk signals
+    knows roads that intersect there
+    Can contain stop signs (s.t. stop signs xor street light set == true)
+
+How to represent road intersections?
+    more complex than a simple graph
+        should (usually) maintain the same street name after an intersection
+        Never the endpoints for 2 roads (not an intersection). >= 1 must pass through.
+
+Train class (could model very simply)
+    length/speed = time that it stops traffic
+
+include highways with on/off ramps?
+
+road objects
+    speed limit
+    construction/accidents
+
+Parameters for adjustment:
+    distribution of source/destination locations along edges
+    distribution of driver aggresiveness
+    likelihood of car accidents
+    speeds reported in kmph or mph
+    likelihood of > 2 streets intersecting in the same place
