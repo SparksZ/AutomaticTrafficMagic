@@ -4,9 +4,9 @@
  * @version 1.0
  */
 public class Car {
-    private double cLength = 13.7;
+    private final double cLength = 13.7;
     private double velocity, acceleration, position;
-    private int frameRate = 1; //seconds
+    private final int frameRate = 1; //seconds
 
     /**
      * Constructs a new Car object
