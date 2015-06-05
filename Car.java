@@ -67,7 +67,7 @@ public class Car {
     }
 
     /**
-     * @return the acceleration (ft/sec/sec) of the car
+     * @return the total distance travelled by this car
      */
     public double getDistanceTravelled() {
         return distanceTravelled;
