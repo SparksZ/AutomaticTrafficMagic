@@ -2,39 +2,35 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Intersection {
-	private LinkedList<Road> roads;
-	private LinkedList<LinkedList<Car>> queues;
+	private Road roads[];
+	private LinkedList<Car> queues[];
 	private Lights lights;
 	
 	/**
 	 * Following is the constructor and 3 overloads
 	 */
 	public Intersection(){
-		roads = new LinkedList<Road>();
-		queues = new LinkedList<LinkedList<Car>>();
 		lights = new Lights();
 	}
 	
 	public Intersection(Lights inLights){
-		roads = new LinkedList<Road>();
-		queues = new LinkedList<LinkedList<Car>>();
 		lights = inLights;
 	}
 
-	public Intersection(Road ... inRoads){
-		roads = new LinkedList<Road>(Arrays.asList(inRoads));
-		queues = new LinkedList<LinkedList<Car>>();
-		for(Road road : roads){
-			queues.add(new LinkedList<Car>());
+	public Intersection(Road ... roads){
+		this.roads = roads;
+		queues = new LinkedList[roads.length];
+		for(LinkedList<Car> queue : queues){
+			queue = new LinkedList<Car>();
 		}
 		lights = new Lights();
 	}
 
-	public Intersection(Lights inLights, Road ... inRoads){
-		roads = new LinkedList<Road>(Arrays.asList(inRoads));
-		queues = new LinkedList<LinkedList<Car>>();
-		for(Road road : roads){
-			queues.add(new LinkedList<Car>());
+	public Intersection(Lights inLights, Road ... roads){
+		this.roads = roads;
+		queues = new LinkedList[roads.length];
+		for(LinkedList<Car> queue : queues){
+			queue = new LinkedList<Car>();
 		}
 		lights = inLights;
 	}
@@ -68,7 +64,12 @@ public class Intersection {
 	 * 			connected. False otherwise.
 	 */
 	public boolean hasRoad(Road road){
-		return roads.contains(road);
+		for(Road rue : roads){
+			if(road.equals(rue)){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -78,8 +79,12 @@ public class Intersection {
 	 * 			Road to add to intersection
 	 */
 	public void addRoad(Road road){
-		roads.add(road);
-		queues.add(new LinkedList<Car>());
+		Road[] newRoads = new Road[roads.length];
+		for(int i = 0; i < roads.length; i++){
+			newRoads[i] = roads[i];
+		}
+		newRoads[roads.length] = road;
+		roads = newRoads;
 	}
 	
 	/**
@@ -94,12 +99,17 @@ public class Intersection {
 	 * 			otherwise.
 	 */
 	public boolean addCarToQueue(Car car, Road road){
-		int index = roads.indexOf(road);
+		int index = -1;
+		for(int i = 0; i < roads.length && index == -1; i++){
+			if(roads[i].equals(road)){
+				index = i;
+			}
+		}
 		if(index == -1){
 			return false;
 		}
 		
-		queues.get(index).add(car);
+		queues[index].add(car);
 		return true;
 	}
 	
@@ -114,11 +124,16 @@ public class Intersection {
 	 * 			it has no cars in its queue.
 	 */
 	public Car moveCarFromQueue(Road road){
-		int index = roads.indexOf(road);
+		int index = -1;
+		for(int i = 0; i < roads.length && index == -1; i++){
+			if(roads[i].equals(road)){
+				index = i;
+			}
+		}
 		if(index == -1){
 			return null;
 		}
 		
-		return queues.get(index).pollFirst();
+		return queues[index].pollFirst();
 	}
 }
