@@ -5,6 +5,7 @@
  */
 public class Car {
     private final double cLength = 13.7;
+    private double distanceTravelled;
     private double velocity, acceleration, position;
     private final double frameRate = 1.0; //seconds
 
@@ -15,6 +16,7 @@ public class Car {
      * @param acceleration the initial acceleration of the car (ft/sec/sec)
      */
     public Car(double position, double velocity, double acceleration) {
+        this.distanceTravelled = 0;
         this.position = position;
         this.velocity = velocity;
         this.acceleration = acceleration;
@@ -39,6 +41,7 @@ public class Car {
      * Updates the position from velocity and frameRate
      */
     private void updatePosition() {
+        distanceTravelled += velocity * frameRate;
         position = position + velocity * frameRate;
     }
 
