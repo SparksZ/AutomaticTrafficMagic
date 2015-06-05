@@ -1,11 +1,12 @@
 /**
  * @author Kendall Merritt
  */
+import java.util.LinkedList;
 
 public class Road {
     private int speedLimit;
     private boolean oneWay;
-    private LinkedList<LinkedList<Car>> car;
+    private LinkedList<LinkedList<Car>> cars;
 
     /**
      * Constructs a new Road object with a speed limit
@@ -14,7 +15,7 @@ public class Road {
     public Road(int speedLimit) {
         this.speedLimit = speedLimit;
         this.oneWay = false;
-        this.cars = new LinkedList<Car>();
+        this.cars = new LinkedList<LinkedList<Car>>();
     }
 
     /**
@@ -25,14 +26,14 @@ public class Road {
     public Road(int speedLimit, boolean oneWay) {
         this.speedLimit = speedLimit;
         this.oneWay = oneWay;
-        this.cars = new LinkedList<Car>();
+        this.cars = new LinkedList<LinkedList<Car>>();
     }
 
     /**
      * Updates the speed limit
      * @param speedLimit The road's speed limit
      */
-    private void setSpeedLimit(int speedLimit) {
+    public void setSpeedLimit(int speedLimit) {
         this.speedLimit = speedLimit;
     }
 
@@ -40,21 +41,25 @@ public class Road {
      * Adds a car to the road's linked list of cars
      * @param car The car to add to the road
      */
-    private void addCar(Car car) {
-        this.cars.addLast(car);
+    public boolean addCar(Car car) {
+    	if(!oneWay){
+    		return false;
+    	}
+        this.cars.get(0).addLast(car);
+        return true;
     }
 
     /**
      * Removes a car from the road's linked list of cars
      */
-    private void removeCar(Car car) {
-        this.cars.pollFirst();
+    public Car removeCar(Car car) {
+        return cars.get(0).pollFirst();
     }
 
     /**
      * Returns a boolean of whether the road is one way or not
      */
-    private boolean isOneWay() {
+    public boolean isOneWay() {
         return this.oneWay;
     }
 

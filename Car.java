@@ -6,7 +6,7 @@
 public class Car {
     private final double cLength = 13.7;
     private double velocity, acceleration, position;
-    private final int frameRate = 1; //seconds
+    private final double frameRate = 1.0; //seconds
 
     /**
      * Constructs a new Car object

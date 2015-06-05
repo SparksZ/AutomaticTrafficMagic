@@ -79,7 +79,7 @@ public class Intersection {
 	 */
 	public void addRoad(Road road){
 		roads.add(road);
-		queues.add(new LinkedList<Cars>());
+		queues.add(new LinkedList<Car>());
 	}
 	
 	/**
