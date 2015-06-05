@@ -67,6 +67,13 @@ public class Car {
     }
 
     /**
+     * @return the acceleration (ft/sec/sec) of the car
+     */
+    public double getDistanceTravelled() {
+        return distanceTravelled;
+    }
+
+    /**
      * Sets the position of the car
      * @param position the position (ft) of the car along the road it is on
      */
