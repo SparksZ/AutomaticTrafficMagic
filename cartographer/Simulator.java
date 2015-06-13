@@ -5,7 +5,7 @@ import java.awt.Dimension;
 
 public class Simulator {
     public static void main(String[] args) {
-        RoadMap myMap = new RoadMap();
+        RoadMap myMap = new RoadMap(new Dimension(500,500));
         Grid theGrid = myMap.getGrid();
         JFrame simulatorWindow = new JFrame("Automatic Traffic Magic");
         MapPanel drawingPanel = new MapPanel(myMap);
@@ -13,8 +13,8 @@ public class Simulator {
 
         tabbedPane.addTab("Map", drawingPanel);
         simulatorWindow.getContentPane().add(tabbedPane);
-        myMap.makeNewRoad(new Coordinate(10,10), 3.2);
-        myMap.makeNewRoad(new Coordinate(30, 30), 2);
+        myMap.makeNewRoad(new Coordinate(50, 50), -30);
+        myMap.makeNewRoad(new Coordinate(30, 100), 10);
 
         drawingPanel.setMinimumSize(new Dimension(300,300));
         //simulatorWindow.setSize(500,500);

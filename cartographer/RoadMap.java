@@ -30,7 +30,7 @@ public class RoadMap extends Observable {
      * @param prngSeed a seed to pass to the random number generator
      */
     public RoadMap(Dimension mapSize, int prngSeed) {
-        super(mapSize);
+        this(mapSize);
         prng = new Random(prngSeed);
     }
 
@@ -45,6 +45,7 @@ public class RoadMap extends Observable {
         // in final code, allow the type of road to be passed as a parameter
         int roadID = getNextRoadID();
         Road newRoad = new SimpleRoad(mapGrid, origin, direction, roadID);
+        newRoad.generateWaypointsForMap(mapSize);
         roads.add(newRoad);
         setChanged();
         notifyObservers(roads);
@@ -71,6 +72,13 @@ public class RoadMap extends Observable {
      */
     public Collection<Road> getAllRoads() {
         return roads;
+    }
+
+    /**
+     * TODO: document
+     */
+    public Dimension getMapSize() {
+        return mapSize;
     }
 
     /**

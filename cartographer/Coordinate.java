@@ -12,4 +12,8 @@ public class Coordinate {
     public double getY() {
         return this.y;
     }
+
+    public double distanceToCoordinate(Coordinate otherCoordinate) {
+        return Math.sqrt(Math.pow(x - otherCoordinate.getX(), 2) + Math.pow(y - otherCoordinate.getY(), 2));
+    }
 }

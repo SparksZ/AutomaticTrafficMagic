@@ -8,15 +8,15 @@ import java.util.Random;
 import java.awt.Dimension;
 
 public abstract class Road {
-    private int speedLimit;
-    private boolean oneWay;
-    private Coordinate origin;
-    private LinkedList<LinkedList<Car>> cars;
-    private Grid theGrid;
-    private double direction;
-    private int roadID;
-    private double startT, endT;
-    private LinkedList<Coordinate> waypoints;
+    protected int speedLimit;
+    protected boolean oneWay;
+    protected Coordinate origin;
+    protected LinkedList<LinkedList<Car>> cars;
+    protected Grid theGrid;
+    protected double direction;
+    protected int roadID;
+    protected double startT, endT;
+    protected LinkedList<TimedCoordinate> waypoints;
 
     public static final int DEFAULT_SPEED_LIMIT = 35;
     public static final int PERPENDICULAR_TENDENCY = 3;
@@ -80,6 +80,10 @@ public abstract class Road {
      */
     public Coordinate getOrigin() {
         return origin;
+    }
+
+    public LinkedList<TimedCoordinate> getWaypoints() {
+        return waypoints;
     }
 
     /**

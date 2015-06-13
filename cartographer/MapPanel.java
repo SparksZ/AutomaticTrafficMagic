@@ -3,6 +3,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.awt.RenderingHints;
 import java.util.Observer;
 import java.util.Observable;
@@ -47,9 +48,19 @@ public class MapPanel extends JPanel implements Observer {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        for(Road r: roads) {
-            // TODO: recognize that the coordinate systems are not necessarily scaled the same
-            g2.fillOval((int)r.getOrigin().getX() - 3, getSize().height - ((int)r.getOrigin().getY()) - 3, 7, 7);
+        double xScale = ((double)getSize().width)/((double)theMap.getMapSize().width);
+        double yScale = ((double)getSize().height)/((double)theMap.getMapSize().height);
+
+        for (Road r: roads) {
+            LinkedList<TimedCoordinate> pts = r.getWaypoints();
+            TimedCoordinate prevPt = pts.get(0), currPt = null;
+
+            for (int i = 1; i < pts.size(); i++) {
+                currPt = pts.get(i);
+                g2.drawLine((int)(xScale*prevPt.getX()), getSize().height - (int)(yScale*prevPt.getY()),
+                            (int)(xScale*currPt.getX()), getSize().height - (int)(yScale*currPt.getY()));
+            }
+            g2.fillOval((int)(xScale*r.getOrigin().getX()) - 3, getSize().height - (int)(yScale*r.getOrigin().getY()) - 3, 7, 7);
         }
     }
 }
