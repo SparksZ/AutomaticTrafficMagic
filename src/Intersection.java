@@ -1,25 +1,29 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Intersection {
-	private LinkedList<Road> roads;
-	private LinkedList<LinkedList<Car>> queues;
-	private Lights lights;
+	private ArrayList<Road> roads;
+	private LinkedList<Car> queues;
+    private ArrayList<Road> roads; /* 0 - 3 are in roads 4 - 7 are out. i % 4
+                                      gives position of road wrt intersection.
+                                      0 north, 1 east, 2 south, 3 west. null if
+                                      road doesn't exist */
+
 	
 	/**
 	 * Following is the constructor and 3 overloads
 	 */
-	public Intersection(){
-		roads = new LinkedList<Road>();
-		queues = new LinkedList<LinkedList<Car>>();
-		lights = new Lights();
+	public Intersection(ArrayList<Road> roads){
+        this.roads = roads;
+        queues = new LinkedList<>();
 	}
 	
-	public Intersection(Lights inLights){
-		roads = new LinkedList<Road>();
-		queues = new LinkedList<LinkedList<Car>>();
-		lights = inLights;
-	}
+//	public Intersection(Lights inLights){
+//		roads = new LinkedList<Road>();
+//		queues = new LinkedList<LinkedList<Car>>();
+//		lights = inLights;
+//	}
 
 	public Intersection(Road ... inRoads){
 		roads = new LinkedList<Road>(Arrays.asList(inRoads));
@@ -27,7 +31,6 @@ public class Intersection {
 		for(Road road : roads){
 			queues.add(new LinkedList<Car>());
 		}
-		lights = new Lights();
 	}
 
 	public Intersection(Lights inLights, Road ... inRoads){

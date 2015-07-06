@@ -1,21 +1,27 @@
+import java.util.LinkedList;
+
 /**
  * @author Kendall Merritt
  */
 import java.util.LinkedList;
 
 public class Road {
-    private int speedLimit;
+    private double speedLimit; // m/s
     private boolean oneWay;
-    private LinkedList<LinkedList<Car>> cars;
+    private LinkedList<Car> cars;
+    private double roadLength;
+    // private LinkedList<LinkedList<Car>> cars;
 
     /**
      * Constructs a new Road object with a speed limit
      * @param speedLimit The road's speed limit
      */
-    public Road(int speedLimit) {
+    public Road(double speedLimit, double roadLength) {
         this.speedLimit = speedLimit;
         this.oneWay = false;
-        this.cars = new LinkedList<LinkedList<Car>>();
+        cars = new LinkedList<>();
+        this.roadLength = roadLength;
+        //this.cars = new LinkedList<LinkedList<Car>>();
     }
 
     /**
@@ -23,18 +29,23 @@ public class Road {
      * @param speedLimit The road's speed limit
      * @param oneWay True if one-way road, false if two-way road
      */
-    public Road(int speedLimit, boolean oneWay) {
+    public Road(double speedLimit, boolean oneWay) {
         this.speedLimit = speedLimit;
         this.oneWay = oneWay;
-        this.cars = new LinkedList<LinkedList<Car>>();
+        cars = new LinkedList<>();
+        //this.cars = new LinkedList<LinkedList<Car>>();
     }
 
     /**
      * Updates the speed limit
      * @param speedLimit The road's speed limit
      */
-    public void setSpeedLimit(int speedLimit) {
+    public void setSpeedLimit(double speedLimit) {
         this.speedLimit = speedLimit;
+    }
+
+    public double getSpeedLimit() {
+        return speedLimit;
     }
 
     /**
@@ -42,10 +53,11 @@ public class Road {
      * @param car The car to add to the road
      */
     public boolean addCar(Car car) {
-    	if(!oneWay){
-    		return false;
-    	}
-        this.cars.get(0).addLast(car);
+//    	if(!oneWay){
+//    		return false;
+//    	}
+        //this.cars.get(0).addLast(car);
+        cars.addLast(car);
         return true;
     }
 
@@ -53,7 +65,8 @@ public class Road {
      * Removes a car from the road's linked list of cars
      */
     public Car removeCar(Car car) {
-        return cars.get(0).pollFirst();
+        //return cars.get(0).pollFirst();
+        return cars.pollFirst();
     }
 
     /**
@@ -61,6 +74,22 @@ public class Road {
      */
     public boolean isOneWay() {
         return this.oneWay;
+    }
+
+    public Car getLast() {
+        return cars.peekLast();
+    }
+
+    public Car getFirst() {
+        return cars.peekFirst();
+    }
+
+    public double getRoadLength() {
+        return roadLength;
+    }
+
+    public LinkedList<Car> getCars() {
+        return cars;
     }
 
 }
