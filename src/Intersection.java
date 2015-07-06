@@ -3,19 +3,17 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Intersection {
-	private ArrayList<Road> roads;
 	private LinkedList<Car> queues;
     private ArrayList<Road> roads; /* 0 - 3 are in roads 4 - 7 are out. i % 4
                                       gives position of road wrt intersection.
                                       0 north, 1 east, 2 south, 3 west. null if
                                       road doesn't exist */
-
 	
 	/**
 	 * Following is the constructor and 3 overloads
 	 */
-	public Intersection(ArrayList<Road> roads){
-        this.roads = roads;
+	public Intersection(ArrayList<Road> roadss){
+        this.roads = roadss;
         queues = new LinkedList<>();
 	}
 	
@@ -25,22 +23,22 @@ public class Intersection {
 //		lights = inLights;
 //	}
 
-	public Intersection(Road ... inRoads){
-		roads = new LinkedList<Road>(Arrays.asList(inRoads));
-		queues = new LinkedList<LinkedList<Car>>();
-		for(Road road : roads){
-			queues.add(new LinkedList<Car>());
-		}
-	}
+//	public Intersection(Road ... roads){
+//		this.roads = roads;
+//		queues = new LinkedList[roads.length];
+//		for(LinkedList<Car> queue : queues){
+//			queue = new LinkedList<Car>();
+//		}
+//	}
 
-	public Intersection(Lights inLights, Road ... inRoads){
-		roads = new LinkedList<Road>(Arrays.asList(inRoads));
-		queues = new LinkedList<LinkedList<Car>>();
-		for(Road road : roads){
-			queues.add(new LinkedList<Car>());
-		}
-		lights = inLights;
-	}
+//	public Intersection(Lights inLights, Road ... roads){
+//		this.roads = roads;
+//		queues = new LinkedList[roads.length];
+//		for(LinkedList<Car> queue : queues){
+//			queue = new LinkedList<Car>();
+//		}
+//		lights = inLights;
+//	}
 	
 	/**
 	 * Override for equals method to see if two
@@ -71,57 +69,76 @@ public class Intersection {
 	 * 			connected. False otherwise.
 	 */
 	public boolean hasRoad(Road road){
-		return roads.contains(road);
-	}
-	
-	/**
-	 * Adds a road connection to the intersection.
-	 * 
-	 * @param road
-	 * 			Road to add to intersection
-	 */
-	public void addRoad(Road road){
-		roads.add(road);
-		queues.add(new LinkedList<Car>());
-	}
-	
-	/**
-	 * Adds a car to the end of the queue from
-	 * a road.
-	 * 
-	 * @param car
-	 * 			Car to add to the queue
-	 * @param road
-	 * 			Road the car is on
-	 * @return	True if the road exists. False
-	 * 			otherwise.
-	 */
-	public boolean addCarToQueue(Car car, Road road){
-		int index = roads.indexOf(road);
-		if(index == -1){
-			return false;
+		for(Road rue : roads){
+			if(road.equals(rue)){
+				return true;
+			}
 		}
-		
-		queues.get(index).add(car);
-		return true;
+		return false;
 	}
 	
-	/**
-	 * Moves a car from the front of a queue
-	 * from a road.
-	 * 
-	 * @param road
-	 * 			Road the car is on
-	 * @return	The car that was moved. Null
-	 * 			if the road doesn't exist or
-	 * 			it has no cars in its queue.
-	 */
-	public Car moveCarFromQueue(Road road){
-		int index = roads.indexOf(road);
-		if(index == -1){
-			return null;
-		}
-		
-		return queues.get(index).pollFirst();
-	}
+//	/**
+//	 * Adds a road connection to the intersection.
+//	 *
+//	 * @param road
+//	 * 			Road to add to intersection
+//	 */
+//	public void addRoad(Road road){
+//		Road[] newRoads = new Road[roads.length];
+//		for(int i = 0; i < roads.length; i++){
+//			newRoads[i] = roads[i];
+//		}
+//		newRoads[roads.length] = road;
+//		roads = newRoads;
+//	}
+	
+//	/**
+//	 * Adds a car to the end of the queue from
+//	 * a road.
+//	 *
+//	 * @param car
+//	 * 			Car to add to the queue
+//	 * @param road
+//	 * 			Road the car is on
+//	 * @return	True if the road exists. False
+//	 * 			otherwise.
+//	 */
+//	public boolean addCarToQueue(Car car, Road road){
+//		int index = -1;
+//		for(int i = 0; i < roads.length && index == -1; i++){
+//			if(roads[i].equals(road)){
+//				index = i;
+//			}
+//		}
+//		if(index == -1){
+//			return false;
+//		}
+//
+//		queues[index].add(car);
+//		return true;
+//	}
+	
+//	/**
+//	 * Moves a car from the front of a queue
+//	 * from a road.
+//	 *
+//	 * @param road
+//	 * 			Road the car is on
+//	 * @return	The car that was moved. Null
+//	 * 			if the road doesn't exist or
+//	 * 			it has no cars in its queue.
+//	 */
+//	public Car moveCarFromQueue(Road road){
+//		int index = -1;
+//		for(int i = 0; i < roads.length && index == -1; i++){
+//			if(roads[i].equals(road)){
+//				index = i;
+//			}
+//		}
+//		if(index == -1){
+//			return null;
+//		}
+//
+//		return queues[index].pollFirst();
+//	}
 }
