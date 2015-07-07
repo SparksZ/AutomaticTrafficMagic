@@ -1,39 +1,74 @@
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Zack on 7/4/2015.
  */
 public class Driver {
 
-    private static LinkedList<Car> cars = new LinkedList<>();
-    private static double circuitLength = 4000; // meters
-    private static Road circuit;
+    private static Road road1;
+    private static Road road2;
+    private static Intersection inters1;
+    private static double timeElapsed;
 
-    public static void main(String[] args) {
-        circuit = new Road(44, circuitLength);
+    // CONSTANTS
+    public static final double frameRate = 0.5; // seconds
 
-        addCars(15);
+    public synchronized static void main(String[] args) {
+        road1 = new Road(44, 600, null, 0);
+        road2 = new Road(44, 50000, null, road1.getRoadEnd() + Intersection.length);
 
-        int i = 0;
+        CopyOnWriteArrayList<Road> roads = new CopyOnWriteArrayList<Road>();
+        roads.add(road1);
+        roads.add(null);
+        roads.add(null);
+        roads.add(null);
+        roads.add(4, road2);
 
-        while (i < 7200) {
-            circuit.getCars().forEach(Car::update);
-            i++;
+        inters1 = new Intersection(roads);
+        road1.setIntersection(inters1);
+
+        addCars(8);
+
+        timeElapsed = 0;
+
+        while (timeElapsed < 7200) {
+            if (timeElapsed % 45 == 0) {
+                System.out.println("HERE!");
+            }
+            List<Moveable> cars = Collections.synchronizedList(road1.getCars());
+            inters1.update();
+            for (Road r : roads) {
+                if (r != null) {
+                    r.update();
+                }
+            }
+            timeElapsed += (frameRate);
         }
 
-        i++;
+        timeElapsed++;
     }
 
     private static void addCars(int num) {
-        double firstPos = num * (Car.cLength + 2); // + 2 for gap between
+        double firstPos = num * (Car.cLength + Car.minimumGap);
 
-        circuit.addCar(new Car(firstPos - 0 * (Car.cLength + 2), 0, circuit, null));
+        //road1.addCar(new DummyCar(road1.getRoadLength() + inters1.getLength() + 1000));
+        road1.addCar(new Car(firstPos - 0 * (Car.cLength +
+                Car.minimumGap), 0, road1, inters1.getLast()));
 
         for (int i = 1; i < num; i++) {
-            circuit.addCar(new Car(firstPos - i * (Car.cLength + 2), 0, circuit, circuit.getLast()));
+            road1.addCar(new Car(firstPos - i * (Car.cLength +
+                    Car.minimumGap), 0, road1, road1.getLast()));
         }
+    }
 
-        circuit.getFirst().setLeadingCar(circuit.getLast());
+    public static double getTimeElapsed() {
+        return timeElapsed;
     }
 }

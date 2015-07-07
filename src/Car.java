@@ -6,12 +6,12 @@ import java.util.Random;
  * @author Zack Sparks
  * @version 1.0
  */
-public class Car {
+public class Car implements Moveable {
     private double distanceTravelled;
     private double position, velocity, acceleration, deceleration,
             aggressiveFactor, desiredV;
     private Road road;
-    private Car leadingCar;
+    private Moveable leadingCar;
     private final boolean aggressive;
     private Random r = new Random();
 
@@ -19,7 +19,6 @@ public class Car {
     // CONSTANTS
     public static final double ACCEL = 1.25; // m/s^2 typical number
     public static final double cLength = 4; // meters
-    public static final double frameRate = 0.5; // seconds
     public static final double timeHeadway = 1.5; // seconds between cars desired (might need to be lower for city driving)
     public static final double minimumGap = 2.0; // meters between cars at standstill
 
@@ -31,7 +30,8 @@ public class Car {
      * @param road road spawned on
      * @param leadingCar car that is in front of this car
      */
-    public Car(double position, double velocity, Road road, Car leadingCar) {
+    public Car(double position, double velocity, Road road,
+               Moveable leadingCar) {
         this.distanceTravelled = 0;
         this.position = position;
         this.velocity = velocity;
@@ -58,17 +58,13 @@ public class Car {
     public void update() {
         updateVelocity();
         updatePosition();
-
-        if (position > road.getRoadLength()) {
-            position = position % road.getRoadLength();
-        }
     }
 
     /**
      * Updates the Velocity from acceleration and frameRate
      */
     private void updateVelocity() {
-        velocity = velocity + dVdT() * frameRate;
+        velocity = velocity + dVdT() * Driver.frameRate;
     }
 
     /**
@@ -97,14 +93,14 @@ public class Car {
 
     public double leadingCarGap() {
 
-        if (leadingCar.getPosition() < position) {
-            double result = (4000 - (position - leadingCar.getPosition() - cLength));
-
-            if (result < 0) {
-                result = 0;
-            }
-            return result;
-        }
+//        if (leadingCar.getPosition() < position) {
+//            double result = (4000 - (position - leadingCar.getPosition() - cLength));
+//
+//            if (result < 0) {
+//                result = 0;
+//            }
+//            return result;
+//        }
         return Math.abs(leadingCar.getPosition() - cLength - position);
     }
 
@@ -112,8 +108,8 @@ public class Car {
      * Updates the position from velocity and frameRate
      */
     private void updatePosition() {
-        distanceTravelled += velocity * frameRate;
-        position = position + velocity * frameRate;
+        distanceTravelled += velocity * Driver.frameRate;
+        position = position + velocity * Driver.frameRate;
     }
 
     /**
@@ -171,7 +167,7 @@ public class Car {
     /**
      * @return this car's leading car
      */
-    public Car getLeadingCar() {
+    public Moveable getLeadingCar() {
         return leadingCar;
     }
 
@@ -179,12 +175,18 @@ public class Car {
      * Sets this car's leading car
      * @param leadingCar the new leading car
      */
-    public void setLeadingCar(Car leadingCar) {
+    public void setLeadingCar(Moveable leadingCar) {
         this.leadingCar = leadingCar;
+    }
+
+    public double getLength() {
+        return cLength;
     }
 
     public String toString() {
         DecimalFormat f = new DecimalFormat("#0.0");
-        return "P:" + f.format(position) + " V:" + f.format(velocity) + " travelled:" + f.format(distanceTravelled) + " A:" + aggressive + " gap:" + f.format(leadingCarGap());
+        return "P:" + f.format(position) + " V:" + f.format(velocity) +
+                " travelled:" + f.format(distanceTravelled) + " A:" +
+                aggressive + " gap:" + f.format(leadingCarGap());
     }
 }

@@ -1,44 +1,116 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Intersection {
-	private LinkedList<Car> queues;
-    private ArrayList<Road> roads; /* 0 - 3 are in roads 4 - 7 are out. i % 4
+	private CopyOnWriteArrayList<Moveable> queues;
+    private CopyOnWriteArrayList<Road> roads; /* 0 - 3 are in roads 4 - 7 are out. i % 4
                                       gives position of road wrt intersection.
                                       0 north, 1 east, 2 south, 3 west. null if
                                       road doesn't exist */
-	
+    public static final double length = 100; // length of intersection (m)
+    private double northStart;
+    private double northEnd;
+    private double lengthOfCars;
+    private boolean state; // true if N/S is green, false if E/W is green
+    private double nSLightLength = 15;
+    private double eWLightLength = 15;
+	private double lastLightStart;
+
 	/**
 	 * Following is the constructor and 3 overloads
 	 */
-	public Intersection(ArrayList<Road> roadss){
-        this.roads = roadss;
-        queues = new LinkedList<>();
+	public Intersection(CopyOnWriteArrayList<Road> roads){
+        this.roads = roads;
+        queues = new CopyOnWriteArrayList<>();
+        lengthOfCars = 0;
+        lastLightStart = 0; // 0 is the start of the simulation
+        state = true;
+        queues.add(new DummyCar(length + 1000)); // 1000 for green (state == true)
+        northStart = roads.get(0).getRoadEnd();
+        northEnd = northStart + length;
 	}
-	
-//	public Intersection(Lights inLights){
-//		roads = new LinkedList<Road>();
-//		queues = new LinkedList<LinkedList<Car>>();
-//		lights = inLights;
-//	}
 
-//	public Intersection(Road ... roads){
-//		this.roads = roads;
-//		queues = new LinkedList[roads.length];
-//		for(LinkedList<Car> queue : queues){
-//			queue = new LinkedList<Car>();
-//		}
-//	}
+    /**
+     * Adds car from road to Intersection.  If the intersection is backed up,
+     * it will return false, which means the road should start backing up.
+     * @param newCar the car object to add
+     * @return if the car was added.
+     */
+    public boolean addCar(Moveable newCar) {
+        if (newCar.getLength() + Car.minimumGap > length) {
+            return false;
+        }
 
-//	public Intersection(Lights inLights, Road ... roads){
-//		this.roads = roads;
-//		queues = new LinkedList[roads.length];
-//		for(LinkedList<Car> queue : queues){
-//			queue = new LinkedList<Car>();
-//		}
-//		lights = inLights;
-//	}
+        queues.add(newCar);
+        if (!roads.get(0).getCars().isEmpty()) {
+            roads.get(0).getCars().get(0).setLeadingCar(newCar);
+        }
+        lengthOfCars += newCar.getLength() + Car.cLength;
+        return true;
+    }
+
+    public void update() {
+        Road northRoad = roads.get(0);
+        CopyOnWriteArrayList<Moveable> northCars = northRoad.getCars();
+        updateRoadDummy(northRoad, northCars);
+
+        for (int i = 1; i < queues.size(); i++) {
+            queues.get(i).update();
+            if (queues.get(i).getPosition() > northEnd) {
+                roads.get(4).addCar(removeCar());
+            }
+        }
+
+    }
+
+    private Moveable removeCar() {
+        if (queues.size() > 2) {
+            queues.get(2).setLeadingCar(queues.get(0));
+        }
+        return queues.remove(1); /* the first car (0) is a dummy to correct
+                                  behavior of the cars approaching traffic
+                                  lights/intersections */
+    }
+
+    /**
+     * Updates the dummy cars that act as lights
+     * @param road the incoming road
+     * @param cars the list of cars on the incoming road
+     */
+    private void updateRoadDummy(Road road, CopyOnWriteArrayList<Moveable> cars) {
+        if (state == true && (Driver.getTimeElapsed() - lastLightStart) ==
+                nSLightLength) { // NS light needs to change to red
+            queues.set(0, new DummyCar(northEnd));
+            if (!cars.isEmpty()) {
+                cars.get(0).setLeadingCar(getLast());
+            }
+            state = false;
+            lastLightStart = Driver.getTimeElapsed();
+        }
+
+        if (state == false && (Driver.getTimeElapsed() - lastLightStart) ==
+                eWLightLength) { // NS light needs to change to green
+            queues.set(0, new DummyCar(northEnd + 1000)); // 1000 for green light
+
+            if (!cars.isEmpty()) {
+                cars.get(0).setLeadingCar(getLast());
+            }
+
+            if (roads.get(4).getCars().size() > 1 && queues.size() > 1) {
+                queues.get(1).setLeadingCar(roads.get(4).getLast());
+            }
+            state = true;
+            lastLightStart = Driver.getTimeElapsed();
+        }
+
+//        if (queues.size() < 1) {
+//            cars.get(1).setLeadingCar(queues.get(0));
+//        } else {
+//            cars.get(1).setLeadingCar(queues.get(queues.size() - 1));
+//        }
+    }
 	
 	/**
 	 * Override for equals method to see if two
@@ -76,69 +148,16 @@ public class Intersection {
 		}
 		return false;
 	}
-	
-//	/**
-//	 * Adds a road connection to the intersection.
-//	 *
-//	 * @param road
-//	 * 			Road to add to intersection
-//	 */
-//	public void addRoad(Road road){
-//		Road[] newRoads = new Road[roads.length];
-//		for(int i = 0; i < roads.length; i++){
-//			newRoads[i] = roads[i];
-//		}
-//		newRoads[roads.length] = road;
-//		roads = newRoads;
-//	}
-	
-//	/**
-//	 * Adds a car to the end of the queue from
-//	 * a road.
-//	 *
-//	 * @param car
-//	 * 			Car to add to the queue
-//	 * @param road
-//	 * 			Road the car is on
-//	 * @return	True if the road exists. False
-//	 * 			otherwise.
-//	 */
-//	public boolean addCarToQueue(Car car, Road road){
-//		int index = -1;
-//		for(int i = 0; i < roads.length && index == -1; i++){
-//			if(roads[i].equals(road)){
-//				index = i;
-//			}
-//		}
-//		if(index == -1){
-//			return false;
-//		}
-//
-//		queues[index].add(car);
-//		return true;
-//	}
-	
-//	/**
-//	 * Moves a car from the front of a queue
-//	 * from a road.
-//	 *
-//	 * @param road
-//	 * 			Road the car is on
-//	 * @return	The car that was moved. Null
-//	 * 			if the road doesn't exist or
-//	 * 			it has no cars in its queue.
-//	 */
-//	public Car moveCarFromQueue(Road road){
-//		int index = -1;
-//		for(int i = 0; i < roads.length && index == -1; i++){
-//			if(roads[i].equals(road)){
-//				index = i;
-//			}
-//		}
-//		if(index == -1){
-//			return null;
-//		}
-//
-//		return queues[index].pollFirst();
-//	}
+
+    public boolean getState() {
+        return state;
+    }
+
+    public double getLength() {
+        return length;
+    }
+
+    public Moveable getLast() {
+        return queues.get(queues.size() - 1);
+    }
 }
