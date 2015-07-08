@@ -32,8 +32,8 @@ public class Intersection implements Updateable, CarContainer {
      * Instantiates a new intersection.  This creates all roads north and west
      * of the intersection. The east and south roads will be connected by the
      * Driver of the simulation.  For now all are started with NS green EW red.
-     * @param x
-     * @param y
+     * @param x The southern most limit of the intersection
+     * @param y The eastern most limit of the intersection
      * @param sinkScenario -1...8 to specify what roads need to be connected to
      *                     sinks.
      *                     -1: Middle Intersection - no sinks
@@ -55,6 +55,10 @@ public class Intersection implements Updateable, CarContainer {
 
         // Construct Queues of cars. Place dummy cars (Lights)
         queues = new CopyOnWriteArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            queues.add(new CopyOnWriteArrayList<>());
+        }
+
         queues.get(0).add(new DummyCar(xPos, yPos + 1000)); // North in green
         queues.get(1).add(new DummyCar(xPos - roadWidth, yPos)); // East in red
         queues.get(2).add(new DummyCar(xPos, yPos - 1000)); // South in green
@@ -256,6 +260,20 @@ public class Intersection implements Updateable, CarContainer {
         roads.set(i, road);
     }
 
+    public Road getRoad(int i) {
+        return roads.get(i);
+    }
+
+    /**
+     * Sets the intersection of the road at whichRoad to container
+     * @param whichRoad the road in the collection of roads to modifiy
+     * @param r the road to be hooked up to the intersection
+     */
+    public void setCarContainer(int whichRoad, Road r) {
+        roads.set(whichRoad, r);
+        roads.get(whichRoad).setIntersection(this);
+    }
+
     /**
      * Crazy function evaluates which sink scenario and hooks up sinks or
      * or factories if appropriate
@@ -363,5 +381,9 @@ public class Intersection implements Updateable, CarContainer {
             roads.set(7, new Road(speedLimit, roadLength, null, xPos - length -
                     roadLength, yPos, false, false, false));
         }
+    }
+
+    public int getSinkScenario() {
+        return sinkScenario;
     }
 }

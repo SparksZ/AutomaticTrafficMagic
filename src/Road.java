@@ -58,27 +58,37 @@ public class Road implements Updateable {
         if (!cars.isEmpty()) {
             for (Moveable car : cars) {
                 car.update();
+                boolean wasRemoved = false; // Flag to set if was removed or not
 
                 if (nS) {
                     if (positiveFlow) { // travelling south
                         if (car.getYPosition() > ySouthPos) {
                             carContainer.addCar(0, removeCar(0)); // add car to north in queue
+                            wasRemoved = true;
                         }
                     } else { // travelling north
                         if (car.getYPosition() < yNorthPos) {
                             carContainer.addCar(2, removeCar(2)); // add car to south in queue
+                            wasRemoved = true;
                         }
                     }
                 } else {
                     if (positiveFlow) { // travelling east
                         if (car.getXPosition() > xEastPos) {
                             carContainer.addCar(1, removeCar(1)); // add car to east in queue
+                            wasRemoved = true;
                         }
                     } else { // travelling west
                         if (car.getXPosition() < xWestPos) {
                             carContainer.addCar(3, removeCar(3)); // add car to west in queue
+                            wasRemoved = true;
                         }
                     }
+                }
+
+                if (wasRemoved && carContainer instanceof CarSink) {
+                    Car c = (Car) car;
+                    c.setEndTime(Driver.getTimeElapsed());
                 }
             }
         }
@@ -174,7 +184,7 @@ public class Road implements Updateable {
      * Sets the carContainer to the passed object
      * @param int1 new carContainer
      */
-    public void setIntersection(Intersection int1) {
+    public void setIntersection(CarContainer int1) {
         carContainer = int1;
     }
 
