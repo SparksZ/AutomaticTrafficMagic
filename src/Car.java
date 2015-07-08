@@ -8,11 +8,13 @@ import java.util.Random;
  */
 public class Car implements Moveable {
     private double distanceTravelled;
-    private double position, velocity, acceleration, deceleration,
-            aggressiveFactor, desiredV;
+    private double xPosition, yPosition, velocity, acceleration, deceleration,
+            aggressiveFactor, desiredV, startTime, endTime;
     private Road road;
     private Moveable leadingCar;
     private final boolean aggressive;
+    private boolean nS; // specifies if the car is traveling north/south or not (east/west)
+    int direction; // -1 for north/west +1 for south/east
     private Random r = new Random();
 
 
@@ -24,19 +26,30 @@ public class Car implements Moveable {
 
     /**
      * Constructs a new Car object
-     * @param position the initial position of the car (simply the number of
+     * @param xPosition the initial x position of the car (simply the number of
+     *                 meters along the road from the road's origin)
+     * @param yPosition the initial y position of the car (simply the number of
      *                 meters along the road from the road's origin)
      * @param velocity the initial velocity of the car (m/sec)
      * @param road road spawned on
      * @param leadingCar car that is in front of this car
+     * @param nS whether the car is going north/south or not (e/w)
+     * @param direction whether the car is moving in positive direction (s/e)
+     *                  or not (n/w)
+     * @param startTime the time the car was instantiated
      */
-    public Car(double position, double velocity, Road road,
-               Moveable leadingCar) {
+    public Car(double xPosition, double yPosition, double velocity, Road road,
+               Moveable leadingCar, boolean nS, int direction,
+               double startTime) {
         this.distanceTravelled = 0;
-        this.position = position;
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
         this.velocity = velocity;
         this.road = road;
         this.leadingCar = leadingCar;
+        this.nS = nS;
+        this.direction = direction;
+        this.startTime = startTime;
 
         if (r.nextDouble() < .75) {
             aggressive = false;
@@ -93,15 +106,11 @@ public class Car implements Moveable {
 
     public double leadingCarGap() {
 
-//        if (leadingCar.getPosition() < position) {
-//            double result = (4000 - (position - leadingCar.getPosition() - cLength));
-//
-//            if (result < 0) {
-//                result = 0;
-//            }
-//            return result;
-//        }
-        return Math.abs(leadingCar.getPosition() - cLength - position);
+        if (nS) {
+            return Math.abs(leadingCar.getYPosition() - cLength - yPosition);
+        } else {
+            return Math.abs(leadingCar.getXPosition() - cLength - xPosition);
+        }
     }
 
     /**
@@ -109,14 +118,32 @@ public class Car implements Moveable {
      */
     private void updatePosition() {
         distanceTravelled += velocity * Driver.frameRate;
-        position = position + velocity * Driver.frameRate;
+
+        if (nS) {
+            yPosition = yPosition + velocity * Driver.frameRate * direction;
+        } else {
+            xPosition = xPosition + velocity * Driver.frameRate * direction;
+        }
     }
 
-    /**
-     * @return the position (ft) of the car
-     */
-    public double getPosition() {
-        return position;
+    @Override
+    public void setXPosition(double position) {
+        xPosition = position;
+    }
+
+    @Override
+    public double getXPosition() {
+        return xPosition;
+    }
+
+    @Override
+    public void setYPosition(double position) {
+        yPosition = position;
+    }
+
+    @Override
+    public double getYPosition() {
+        return yPosition;
     }
 
     /**
@@ -138,14 +165,6 @@ public class Car implements Moveable {
      */
     public double getDistanceTravelled() {
         return distanceTravelled;
-    }
-
-    /**
-     * Sets the position of the car
-     * @param position the position (ft) of the car along the road it is on
-     */
-    public void setPosition(double position) {
-        this.position = position;
     }
 
     /**
@@ -185,8 +204,17 @@ public class Car implements Moveable {
 
     public String toString() {
         DecimalFormat f = new DecimalFormat("#0.0");
-        return "P:" + f.format(position) + " V:" + f.format(velocity) +
-                " travelled:" + f.format(distanceTravelled) + " A:" +
-                aggressive + " gap:" + f.format(leadingCarGap());
+        return "P: (" + f.format(xPosition) + ", " + f.format(yPosition) +
+                ") V:" + f.format(velocity) + " travelled:" +
+                f.format(distanceTravelled) + " A:" + aggressive +
+                " gap:" + f.format(leadingCarGap());
+    }
+
+    /**
+     * Sets the end time of the car when it leaves the map
+     * @param endTime the end time of the car
+     */
+    public void setEndTime(double endTime) {
+        this.endTime = endTime;
     }
 }
