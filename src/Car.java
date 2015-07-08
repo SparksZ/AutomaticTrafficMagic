@@ -107,9 +107,9 @@ public class Car implements Moveable {
     public double leadingCarGap() {
 
         if (nS) {
-            return Math.abs(leadingCar.getYPosition() - cLength - yPosition);
+            return Math.abs(leadingCar.getYPosition() - yPosition) - cLength ;
         } else {
-            return Math.abs(leadingCar.getXPosition() - cLength - xPosition);
+            return Math.abs(leadingCar.getXPosition() - xPosition) - cLength ;
         }
     }
 
@@ -216,5 +216,12 @@ public class Car implements Moveable {
      */
     public void setEndTime(double endTime) {
         this.endTime = endTime;
+    }
+
+    /**
+     * @return the lifetime of the car
+     */
+    public double getLifetime() {
+        return endTime - startTime;
     }
 }

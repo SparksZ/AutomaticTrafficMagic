@@ -1,27 +1,32 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Intersection {
-	private CopyOnWriteArrayList<CopyOnWriteArrayList<Moveable>> queues;
+public class Intersection implements Updateable, CarContainer {
+    private final int sinkScenario;
+    private CopyOnWriteArrayList<CopyOnWriteArrayList<Moveable>> queues;
     private CopyOnWriteArrayList<Road> roads; /* 0 - 3 are in roads 4 - 7 are out. i % 4
                                       gives position of road wrt intersection.
                                       0 north, 1 east, 2 south, 3 west. null if
                                       road doesn't exist */
-    public static final double length = 75; // length of intersection (m)
-    public static final double roadLength = 200;
-    public static final double roadWidth = 15;
     private double northStart;
     private double northEnd;
     private CopyOnWriteArrayList<Double> lengthOfCars;
     private boolean state; // true if N/S is green, false if E/W is green
-    private double nSLightLength = 15;
-    private double eWLightLength = 15;
 	private double lastLightStart;
     private double xPos; // eastern most point of the intersection
     private double yPos; // southern most point of the intersection
+    private CopyOnWriteArrayList<CarSink> sinks = new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<CarFactory> factories =
+            new CopyOnWriteArrayList<>();
+
+
+    // CONSTANTS
+    private final double nSLightLength = 15;
+    private final double eWLightLength = 15;
     private final double speedLimit = 16;
+    private final int secondsPerCar = 5;
+    public static final double length = 75; // length of intersection (m)
+    public static final double roadLength = 200;
+    public static final double roadWidth = 15;
 
     /**
      * Instantiates a new intersection.  This creates all roads north and west
@@ -29,27 +34,24 @@ public class Intersection {
      * Driver of the simulation.  For now all are started with NS green EW red.
      * @param x
      * @param y
+     * @param sinkScenario -1...8 to specify what roads need to be connected to
+     *                     sinks.
+     *                     -1: Middle Intersection - no sinks
+     *                     0: Northwest Corner
+     *                     1: North side of grid
+     *                     2: Northeast Corner
+     *                     3: East side of grid
+     *                     4: Southeast Corner
+     *                     5: South side of grid
+     *                     6: Southwest Corner
+     *                     7: West side of grid
      */
-    public Intersection(double x, double y) {
+    public Intersection(double x, double y, int sinkScenario) {
         xPos = x;
         yPos = y;
+        this.sinkScenario = sinkScenario;
 
-
-        /* Create North and West Roads (Driver will connect others after all
-           instantiated */
-        roads = new CopyOnWriteArrayList<>();
-        roads.add(new Road(speedLimit, roadLength, this, xPos, yPos - length -
-                roadLength, true, true)); // North In
-        roads.add(null); // East In
-        roads.add(null); // South In
-        roads.add(new Road(speedLimit, roadLength, this, xPos - length -
-                roadLength, yPos, false, true)); // West In
-        roads.add(new Road(speedLimit, roadLength, this, xPos, yPos - length -
-                roadLength, true, false)); // North Out
-        roads.add(null); // East Out
-        roads.add(null); // South Out
-        roads.add(new Road(speedLimit, roadLength, this, xPos - length -
-                roadLength, yPos, false, false)); // West Out
+        setUpRoads();
 
         // Construct Queues of cars. Place dummy cars (Lights)
         queues = new CopyOnWriteArrayList<>();
@@ -252,5 +254,114 @@ public class Intersection {
      */
     public void setRoad(int i, Road road) {
         roads.set(i, road);
+    }
+
+    /**
+     * Crazy function evaluates which sink scenario and hooks up sinks or
+     * or factories if appropriate
+     */
+    private void setUpRoads() {
+        /* Create North and West Roads (Driver will connect others after all
+           instantiated) unless factory or sink */
+        roads = new CopyOnWriteArrayList<>();
+
+        for (int i = 0; i < 8; i++) {
+            roads.add(null);
+        }
+
+        // Checks if North out/in needs to connect to a sink/factory
+        if (sinkScenario == 0 || sinkScenario == 1 || sinkScenario == 2) {
+            // in road
+            Road in = new Road(speedLimit, roadLength, this, xPos, yPos -
+                    length - roadLength, true, true, false); // North In
+
+            CarFactory f = new CarFactory(in, secondsPerCar);
+            factories.add(f);
+            roads.set(0, in);
+
+            // out road
+            CarSink s = new CarSink(null);
+            Road out = new Road(speedLimit, roadLength, s, xPos, yPos -
+                    length - roadLength, true, false, true);
+
+            s.setRoad(out);
+            sinks.add(s);
+            roads.set(4, out);
+        } else {
+            roads.set(0, new Road(speedLimit, roadLength, this, xPos, yPos -
+                    length - roadLength, true, true, false));
+
+            roads.set(4, new Road(speedLimit, roadLength, null, xPos, yPos -
+                    length - roadLength, true, false, false));
+        }
+
+        // Checks if East out/in needs to connect to a sink/factory
+        if (sinkScenario == 2 || sinkScenario == 3 || sinkScenario == 4 ) {
+            // in road
+            Road in = new Road(speedLimit, roadLength, this, xPos + length,
+                    yPos, false, false, false);
+
+            CarFactory f = new CarFactory(in, secondsPerCar);
+            factories.add(f);
+            roads.set(1, in);
+
+            // out road
+            CarSink s = new CarSink(null);
+            Road r = new Road(speedLimit, roadLength, s, xPos + length, yPos,
+                    false, true, true);
+            s.setRoad(r);
+            sinks.add(s);
+            roads.set(5, r);
+        } else {
+            roads.set(1, null);
+            roads.set(5, null);
+        }
+
+        // Checks if South out/in needs to connect to sink/factory
+        if (sinkScenario == 4 || sinkScenario == 5 || sinkScenario == 6 ) {
+            // in road
+            Road in = new Road(speedLimit, roadLength, this, xPos, yPos +
+                    length, true, false, false);
+
+            CarFactory f = new CarFactory(in, secondsPerCar);
+            factories.add(f);
+            roads.set(2, in);
+
+            // out road
+            CarSink s = new CarSink(null);
+            Road r = new Road(speedLimit, roadLength, s, xPos, yPos + length,
+                    true, true, true);
+            s.setRoad(r);
+            sinks.add(s);
+            roads.set(6, r);
+        } else {
+            roads.set(2, null);
+            roads.set(6, null);
+        }
+
+        // Checks if West out/in needs to connect to sink/factory
+        if (sinkScenario == 6 || sinkScenario == 7 || sinkScenario == 0 ) {
+            // in road
+            Road in = new Road(speedLimit, roadLength, this, xPos - length -
+                    roadLength, yPos, false, true, false);
+
+            CarFactory f = new CarFactory(in, secondsPerCar);
+            factories.add(f);
+            roads.set(3, in);
+
+            // out road
+            CarSink s = new CarSink(null);
+            Road r = new Road(speedLimit, roadLength, s, xPos - length -
+                    roadLength, yPos, false, false, true);
+            s.setRoad(r);
+            sinks.add(s);
+            roads.set(7, r);
+        } else {
+            roads.set(3, new Road(speedLimit, roadLength, this, xPos - length -
+                    roadLength, yPos, false, true, false));
+
+            roads.set(7, new Road(speedLimit, roadLength, null, xPos - length -
+                    roadLength, yPos, false, false, false));
+        }
     }
 }
