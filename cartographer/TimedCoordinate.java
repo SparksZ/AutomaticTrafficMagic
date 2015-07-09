@@ -2,7 +2,7 @@ public class TimedCoordinate extends Coordinate {
 
     private double time;
 
-    public TimedCoordinate(double t, double x, double y) {
+    public TimedCoordinate(double t, int x, int y) {
         super(x, y);
         time = t;
     }

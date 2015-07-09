@@ -4,6 +4,7 @@
  */
 
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Random;
 import java.awt.Dimension;
 
@@ -16,7 +17,7 @@ public abstract class Road {
     protected double direction;
     protected int roadID;
     protected double startT, endT;
-    protected LinkedList<TimedCoordinate> waypoints;
+    protected ArrayList<TimedCoordinate> waypoints;
 
     public static final int DEFAULT_SPEED_LIMIT = 35;
     public static final int PERPENDICULAR_TENDENCY = 3;
@@ -82,7 +83,14 @@ public abstract class Road {
         return origin;
     }
 
-    public LinkedList<TimedCoordinate> getWaypoints() {
+    /**
+     * @return the road's ID number
+     */
+    public int getRoadID() {
+        return roadID;
+    }
+
+    public ArrayList<TimedCoordinate> getWaypoints() {
         return waypoints;
     }
 
@@ -103,6 +111,7 @@ public abstract class Road {
      * @return the coordinate of where the road is at this time
      */
     public abstract Coordinate roadLocationAtTime(double t);
+
 
     /**
      * @param t the input to a parametric function describing this road

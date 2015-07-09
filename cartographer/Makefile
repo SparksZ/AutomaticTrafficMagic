@@ -1,5 +1,6 @@
 files = $(wildcard *.java)
-bytecode = $(addsuffix .class,$(basename $(files)))
+bytecode = $(wildcard *.class)
+# bytecode = $(addsuffix .class,$(basename $(files)))
 
 all: $(files)
 	javac $(files)

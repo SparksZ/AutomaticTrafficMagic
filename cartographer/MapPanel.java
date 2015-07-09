@@ -52,7 +52,7 @@ public class MapPanel extends JPanel implements Observer {
         double yScale = ((double)getSize().height)/((double)theMap.getMapSize().height);
 
         for (Road r: roads) {
-            LinkedList<TimedCoordinate> pts = r.getWaypoints();
+            ArrayList<TimedCoordinate> pts = r.getWaypoints();
             TimedCoordinate prevPt = pts.get(0), currPt = null;
 
             for (int i = 1; i < pts.size(); i++) {

@@ -18,7 +18,7 @@ public class RoadMap extends Observable {
      * @param mapSize the size of the map, as a Dimension. This is unitless and only affects computation time.
      */
     public RoadMap(Dimension mapSize) {
-        mapGrid = new Grid(GRID_RESOLUTION);
+        mapGrid = new Grid(GRID_RESOLUTION, mapSize);
         roads = new ArrayList<Road>();
         prng = new Random();
         this.mapSize = mapSize;
@@ -49,6 +49,7 @@ public class RoadMap extends Observable {
         roads.add(newRoad);
         setChanged();
         notifyObservers(roads);
+        mapGrid.addRoadToGrid(newRoad);
         return newRoad;
     }
 
