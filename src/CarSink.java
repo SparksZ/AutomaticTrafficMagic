@@ -17,6 +17,8 @@ public class CarSink implements CarContainer {
         this.road = road;
     }
 
+
+
     /**
      * Adds a car to the sink
      * @param car the car to add to the sink
@@ -26,12 +28,25 @@ public class CarSink implements CarContainer {
         return true;
     }
 
+    @Override
+    public Moveable getLast(int i) {
+        return cars.get(0);
+    }
+
     /**
      * Sets the sink's road
      * @param road road to be set
      */
     public void setRoad(Road road) {
         this.road = road;
+    }
+
+    /**
+     * Sets the dummy car so the cars heading toward the sink will have a
+     * car to go towards
+     */
+    public void setDummy() {
+        cars.add(new DummyCar(road.getXEndForDummy(), road.getYEndForDummy()));
     }
 
     /**

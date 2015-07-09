@@ -51,7 +51,12 @@ public class DummyCar implements Moveable {
 
     }
 
+    @Override
+    public void setRoad(Road r) {
+
+    }
+
     public String toString() {
-        return "P: (" + xPosition + ", " + yPosition;
+        return "P: (" + xPosition + ", " + yPosition + ")";
     }
 }

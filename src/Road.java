@@ -63,24 +63,24 @@ public class Road implements Updateable {
                 if (nS) {
                     if (positiveFlow) { // travelling south
                         if (car.getYPosition() > ySouthPos) {
-                            carContainer.addCar(0, removeCar(0)); // add car to north in queue
+                            carContainer.addCar(0, cars.remove(0)); // removeCar(0)); // add car to north in queue
                             wasRemoved = true;
                         }
                     } else { // travelling north
                         if (car.getYPosition() < yNorthPos) {
-                            carContainer.addCar(2, removeCar(2)); // add car to south in queue
+                            carContainer.addCar(2, cars.remove(0)); //  removeCar(2)); // add car to south in queue
                             wasRemoved = true;
                         }
                     }
                 } else {
                     if (positiveFlow) { // travelling east
                         if (car.getXPosition() > xEastPos) {
-                            carContainer.addCar(1, removeCar(1)); // add car to east in queue
+                            carContainer.addCar(3, cars.remove(0)); //  removeCar(1)); // add car to east in queue
                             wasRemoved = true;
                         }
                     } else { // travelling west
                         if (car.getXPosition() < xWestPos) {
-                            carContainer.addCar(3, removeCar(3)); // add car to west in queue
+                            carContainer.addCar(1, cars.remove(0)); //  removeCar(3)); // add car to west in queue
                             wasRemoved = true;
                         }
                     }
@@ -111,6 +111,7 @@ public class Road implements Updateable {
      * @param car The car to add to the road
      */
     public boolean addCar(Moveable car) {
+        car.setRoad(this);
         cars.add(car);
         return true;
     }
@@ -126,9 +127,7 @@ public class Road implements Updateable {
             Intersection intersection = (Intersection) carContainer;
             cars.get(1).setLeadingCar(intersection.getLast(i));
         }
-        return cars.remove(0); /* the first car (0) is a dummy to correct
-                                  behavior of the cars approaching traffic
-                                  lights/intersections */
+        return cars.remove(0);
     }
 
     /**
@@ -149,7 +148,27 @@ public class Road implements Updateable {
      * @return the last car on the road
      */
     public Moveable getLast() {
-        return cars.get(cars.size() - 1);
+        Moveable result;
+
+        if (!cars.isEmpty()) {
+            return cars.get(cars.size() - 1);
+        } else {
+            if (nS) {
+                if (positiveFlow) { // Southbound
+                    result = carContainer.getLast(0);
+                } else { // Northbound
+                    result = carContainer.getLast(2);
+                }
+            } else {
+                if (positiveFlow) { // Eastbound
+                    result = carContainer.getLast(3);
+                } else { // Westbound
+                    result = carContainer.getLast(1);
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -250,5 +269,33 @@ public class Road implements Updateable {
         return result;
     }
 
+    /**
+     * @return the furthest x postion of the road for placing dummy
+     */
+    public double getXEndForDummy() {
+        if (nS) { // X is the same for north south roads at begining and end
+            return xEastPos;
+        } else { // e/w
+            if (positiveFlow) { // eastbound
+                return xEastPos + 1000;
+            } else { // Westbound
+                return xWestPos - 1000;
+            }
+        }
+    }
 
+    /**
+     * @return the furthest Y postion of the road for placing dummy
+     */
+    public double getYEndForDummy() {
+        if (nS) { // N/S
+            if (positiveFlow) { // Southbound
+                return ySouthPos + 1000;
+            } else {
+                return yNorthPos - 1000;
+            }
+        } else { // Y is the same for north south roads at beginning and end
+            return yNorthPos;
+        }
+    }
 }

@@ -8,4 +8,5 @@ public interface CarContainer {
      * @param car Car to be added
      */
     boolean addCar(int whichRoad, Moveable car);
+    Moveable getLast(int i);
 }

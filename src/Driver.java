@@ -9,8 +9,6 @@ import java.util.concurrent.Executors;
  */
 public class Driver {
 
-    private static Road road1;
-    private static Road road2;
     private static CopyOnWriteArrayList<Intersection> intersections;
     private static double timeElapsed;
 
@@ -20,44 +18,22 @@ public class Driver {
     public synchronized static void main(String[] args) {
         intersections = new CopyOnWriteArrayList<>();
 
-        createIntersections(5);
+        createIntersections(2);
         connectIntersections();
-        System.out.println("Done");
-//        // Create Intersections (Y x Y)
-//
-//
-//        road1 = new Road(44, 600, null, 0);
-//        road2 = new Road(44, 50000, null, road1.getRoadEnd() + Intersection.length);
-//
-//        CopyOnWriteArrayList<Road> roads = new CopyOnWriteArrayList<Road>();
-//        roads.add(road1);
-//        roads.add(null);
-//        roads.add(null);
-//        roads.add(null);
-//        roads.add(4, road2);
-//
-//        inters1 = new Intersection(roads);
-//        road1.setIntersection(inters1);
-//
-//        addCars(8);
-//
-//        timeElapsed = 0;
-//
-//        while (timeElapsed < 7200) {
-//            if (timeElapsed % 45 == 0) {
+
+        timeElapsed = 0;
+
+        while (timeElapsed < 5000) {
+//            if (timeElapsed % 30 == 0) {
 //                System.out.println("HERE!");
 //            }
-//            List<Moveable> cars = Collections.synchronizedList(road1.getCars());
-//            inters1.update();
-//            for (Road r : roads) {
-//                if (r != null) {
-//                    r.update();
-//                }
-//            }
-//            timeElapsed += (frameRate);
-//        }
-//
-//        timeElapsed++;
+
+            intersections.forEach(Intersection::update);
+
+            timeElapsed += (frameRate);
+        }
+
+        timeElapsed++;
     }
 
     private static void connectIntersections() {
@@ -87,13 +63,15 @@ public class Driver {
                 // Connects all East Out roads that need East Intersection
                 if (Arrays.asList(0, 1, 7 , -1, 6 , 5).contains(sinkScenario)) {
                     Intersection remote = intersections.get(i * y + j + 1);
-                    inter.setCarContainer(5, remote.getRoad(3));
+                    inter.setRoad(5, remote.getRoad(3));
+                    //remote.setCarContainer(3, inter.getRoad(5));
                 }
 
                 // Connect all South Out roads that need South Intersection
                 if (Arrays.asList(0, 1, 2, 7, -1, 3).contains(sinkScenario)) {
                     Intersection remote = intersections.get((i + 1) * y + j);
-                    inter.setCarContainer(6, remote.getRoad(0));
+                    inter.setRoad(6, remote.getRoad(0));
+                    //inter.setCarContainer(6, remote.getRoad(0));
                 }
 
                 // Connects all West Out roads that need West Intersection
@@ -112,8 +90,8 @@ public class Driver {
             for (int j = 0; j < y; j++) { // Columns of intersections
                 int sinkScenario = getSinkScenario(y, i, j);
 
-                Intersection inter = new Intersection(800 + totalLength *
-                        (j + 1), 800 + totalLength * (i + 1), sinkScenario);
+                Intersection inter = new Intersection(1000 + totalLength *
+                        (j + 1), 1000 + totalLength * (i + 1), sinkScenario);
 
                 intersections.add(inter);
             }
