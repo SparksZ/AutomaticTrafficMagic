@@ -23,9 +23,9 @@ public class Driver {
 
         timeElapsed = 0;
 
-        while (timeElapsed < 5000) {
-//            if (timeElapsed % 30 == 0) {
-//                System.out.println("HERE!");
+        while (timeElapsed < 7200) {
+//            if (timeElapsed != 0 && timeElapsed % 300 == 0) {
+//                System.out.println("here");
 //            }
 
             intersections.forEach(Intersection::update);

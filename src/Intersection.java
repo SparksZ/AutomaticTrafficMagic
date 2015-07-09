@@ -24,7 +24,7 @@ public class Intersection implements Updateable, CarContainer {
     private final double nSLightLength = 15;
     private final double eWLightLength = 15;
     private final double speedLimit = 16;
-    private final int secondsPerCar = 15;
+    private final int secondsPerCar = 7200;
     public static final double length = 75; // length of intersection (m)
     public static final double roadLength = 200;
     public static final double roadWidth = 15;
@@ -60,6 +60,7 @@ public class Intersection implements Updateable, CarContainer {
             queues.add(new CopyOnWriteArrayList<>());
         }
 
+        state = true;
         queues.get(0).add(new DummyCar(xPos, yPos + 1000)); // North in green
         queues.get(1).add(new DummyCar(xPos - roadWidth, yPos)); // East in red
         queues.get(2).add(new DummyCar(xPos, yPos - 1000)); // South in green
@@ -214,32 +215,50 @@ public class Intersection implements Updateable, CarContainer {
         // Advances Cars in Queues
         for (int i = 0; i < 4; i++) { // loops through queues
             CopyOnWriteArrayList<Moveable> q = queues.get(i);
-            for (int j = 1; j < q.size(); j++) { // loops through cars in queue
-                Moveable car = q.get(j);
-                car.update();
+            if (q.size() > 1) {
+                for (int j = 1; j < q.size(); j++) { // loops through cars in queue
+                    Moveable car = q.get(j);
+                    car.update();
 
-                // Removes cars from the intersection when they reach the end
-                switch(i) {
-                    case 0: // North in queue
-                        if (car.getYPosition() > yPos) {
-                            roads.get(6).addCar(q.remove(1)); // removeCar(i));
-                        }
-                        break;
-                    case 1: // East in queue
-                        if (car.getXPosition() < xPos) {
-                            roads.get(7).addCar(q.remove(1)); // removeCar(i));
-                        }
-                        break;
-                    case 2: // South in queue
-                        if (car.getYPosition() < yPos) {
-                            roads.get(4).addCar(q.remove(1)); // removeCar(i));
-                        }
-                        break;
-                    case 3: // West in queue
-                        if (car.getXPosition() > xPos) {
-                            roads.get(5).addCar(q.remove(1)); // removeCar(i));
-                        }
-                        break;
+                    Road next = roads.get(i); // ugly instantiation...
+                    boolean removed = false;
+
+                    // Removes cars from the intersection when they reach the end
+                    switch (i) {
+                        case 0: // North in queue
+                            if (car.getYPosition() > yPos) {
+                                // Gets the road the car is newly on
+                                next = roads.get(6);
+                                removed = true;
+                            }
+                            break;
+                        case 1: // East in queue
+                            if (car.getXPosition() < xPos) {
+                                // Gets the road the car is newly on
+                                next = roads.get(7);
+                                removed = true;
+                            }
+                            break;
+                        case 2: // South in queue
+                            if (car.getYPosition() < yPos) {
+                                next = roads.get(4);
+                                removed = true;
+                            }
+                            break;
+                        case 3: // West in queue
+                            if (car.getXPosition() > xPos) {
+                                next = roads.get(5);
+                                removed = true;
+                            }
+                            break;
+                    }
+
+                    if (removed) {
+                        // removes car from q and add it to next road
+                        car.setLeadingCar(next.getLast());
+                        next.addCar(car);
+                        q.remove(car);
+                    }
                 }
             }
         }
@@ -453,5 +472,11 @@ public class Intersection implements Updateable, CarContainer {
 
     public int getSinkScenario() {
         return sinkScenario;
+    }
+
+    public String toString() {
+        String ns = (state) ? "Green" : "Red";
+        String ew = (state) ? "Red" : "Green";
+        return "N/S: " + ns + " E/W: " + ew;
     }
 }

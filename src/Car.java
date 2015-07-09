@@ -232,4 +232,22 @@ public class Car implements Moveable {
     public void setRoad(Road r) {
         road = r;
     }
+
+    /**
+     * Checks if another car is equal to this car based on position
+     * @param o object to compare equality to this
+     * @return whether or not the passed object is equal to this object
+     */
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof Car)) {
+            return false;
+        }
+        if (o == this) {
+            return true;
+        }
+
+        Car that = (Car) o;
+        return (that.getXPosition() == this.xPosition) && (that.getYPosition()
+                == this.yPosition);
+    }
 }

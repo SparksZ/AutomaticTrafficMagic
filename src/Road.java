@@ -63,24 +63,28 @@ public class Road implements Updateable {
                 if (nS) {
                     if (positiveFlow) { // travelling south
                         if (car.getYPosition() > ySouthPos) {
-                            carContainer.addCar(0, cars.remove(0)); // removeCar(0)); // add car to north in queue
+                            carContainer.addCar(0, car); // add car to north in queue
+                            cars.remove(car);
                             wasRemoved = true;
                         }
                     } else { // travelling north
                         if (car.getYPosition() < yNorthPos) {
-                            carContainer.addCar(2, cars.remove(0)); //  removeCar(2)); // add car to south in queue
+                            carContainer.addCar(2, car); //  removeCar(2)); // add car to south in queue
+                            cars.remove(car);
                             wasRemoved = true;
                         }
                     }
                 } else {
                     if (positiveFlow) { // travelling east
                         if (car.getXPosition() > xEastPos) {
-                            carContainer.addCar(3, cars.remove(0)); //  removeCar(1)); // add car to east in queue
+                            carContainer.addCar(3, car); //  removeCar(1)); // add car to east in queue
+                            cars.remove(car);
                             wasRemoved = true;
                         }
                     } else { // travelling west
                         if (car.getXPosition() < xWestPos) {
-                            carContainer.addCar(1, cars.remove(0)); //  removeCar(3)); // add car to west in queue
+                            carContainer.addCar(1, car); //  removeCar(3)); // add car to west in queue
+                            cars.remove(car);
                             wasRemoved = true;
                         }
                     }
