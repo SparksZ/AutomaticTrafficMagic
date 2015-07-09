@@ -24,7 +24,7 @@ public class Intersection implements Updateable, CarContainer {
     private final double nSLightLength = 15;
     private final double eWLightLength = 15;
     private final double speedLimit = 16;
-    private final int secondsPerCar = 7200;
+    private final int secondsPerCar = 5;
     public static final double length = 75; // length of intersection (m)
     public static final double roadLength = 200;
     public static final double roadWidth = 15;
@@ -229,6 +229,8 @@ public class Intersection implements Updateable, CarContainer {
                             if (car.getYPosition() > yPos) {
                                 // Gets the road the car is newly on
                                 next = roads.get(6);
+                                lengthOfCars.set(0, lengthOfCars.get(0) -
+                                        car.getLength() - Car.minimumGap);
                                 removed = true;
                             }
                             break;
@@ -236,18 +238,24 @@ public class Intersection implements Updateable, CarContainer {
                             if (car.getXPosition() < xPos) {
                                 // Gets the road the car is newly on
                                 next = roads.get(7);
+                                lengthOfCars.set(1, lengthOfCars.get(1) -
+                                        car.getLength() - Car.minimumGap);
                                 removed = true;
                             }
                             break;
                         case 2: // South in queue
                             if (car.getYPosition() < yPos) {
                                 next = roads.get(4);
+                                lengthOfCars.set(2, lengthOfCars.get(2) -
+                                        car.getLength() - Car.minimumGap);
                                 removed = true;
                             }
                             break;
                         case 3: // West in queue
                             if (car.getXPosition() > xPos) {
                                 next = roads.get(5);
+                                lengthOfCars.set(3, lengthOfCars.get(3) -
+                                        car.getLength() - Car.minimumGap);
                                 removed = true;
                             }
                             break;
