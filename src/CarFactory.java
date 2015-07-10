@@ -18,7 +18,9 @@ public class CarFactory implements Updateable {
      */
     public void update() {
         if (Driver.getTimeElapsed() % secondsPerCar == 0) {
-            makeCar();
+            if (!road.isFull()) {
+                makeCar();
+            }
         }
     }
 

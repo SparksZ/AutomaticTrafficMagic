@@ -23,15 +23,13 @@ public class Driver {
 
         timeElapsed = 0;
 
-        while (timeElapsed < 7200) {
-            if (timeElapsed != 0 && timeElapsed % 95 == 0) {
-                System.out.println("here");
-            }
-
+        while (timeElapsed < 28800) {
             intersections.forEach(Intersection::update);
 
             timeElapsed += (frameRate);
         }
+
+
 
         timeElapsed++;
     }

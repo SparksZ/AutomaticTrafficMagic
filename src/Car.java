@@ -15,7 +15,7 @@ public class Car implements Moveable {
     private final boolean aggressive;
     private boolean nS; // specifies if the car is traveling north/south or not (east/west)
     int direction; // -1 for north/west +1 for south/east
-    private Random r = new Random();
+    private Random r = new Random(1);
 
 
     // CONSTANTS
@@ -128,6 +128,10 @@ public class Car implements Moveable {
         } else {
             xPosition = xPosition + velocity * Driver.frameRate * direction;
         }
+
+        if (leadingCarGap() < 2) {
+            velocity = 0;
+        }
     }
 
     @Override
@@ -209,8 +213,7 @@ public class Car implements Moveable {
     public String toString() {
         DecimalFormat f = new DecimalFormat("#0.0");
         return "P: (" + f.format(xPosition) + ", " + f.format(yPosition) +
-                ") V:" + f.format(velocity) + " travelled:" +
-                f.format(distanceTravelled) + " A:" + aggressive +
+                ") V:" + f.format(velocity) +
                 " gap:" + f.format(leadingCarGap());
     }
 

@@ -179,7 +179,7 @@ public class Road implements Updateable {
      * @return the first car on the road
      */
     public Moveable getFirst() {
-        return cars.get(1);
+        return cars.get(0);
     }
 
     /**
@@ -301,5 +301,67 @@ public class Road implements Updateable {
         } else { // Y is the same for north south roads at beginning and end
             return yNorthPos;
         }
+    }
+
+    /**
+     * @return the beginning x postion of the road
+     */
+    public double getXStart() {
+        if (nS) { // X is the same for north south roads at beginning and end
+            return xEastPos;
+        } else { // e/w
+            if (positiveFlow) { // eastbound
+                return xWestPos;
+            } else { // Westbound
+                return xEastPos;
+            }
+        }
+    }
+
+    /**
+     * @return the beginning Y postion of the road
+     */
+    public double getYStart() {
+        if (nS) { // N/S
+            if (positiveFlow) { // Southbound
+                return yNorthPos;
+            } else {
+                return ySouthPos;
+            }
+        } else { // Y is the same for north south roads at beginning and end
+            return yNorthPos;
+        }
+    }
+
+    /**
+     * Checks if the road is full and the factory shouldn't make a new car
+     * @return whether the road is full or not
+     */
+    public boolean isFull() {
+        Moveable car = getLast();
+
+        if (nS) {
+            if (positiveFlow) { // Southbound
+                if (car.getYPosition() < getYStart() + 8) { // 8 meters from start of road
+                    return true;
+                }
+            } else { // Northbound
+                if (car.getYPosition() > getYStart() - 8) {
+                    return true;
+                }
+            }
+        } else { // e/w
+            if (positiveFlow) { // Eastbound
+                if (car.getXPosition() < getXStart() + 8) {
+                    return true;
+                }
+            } else { // Westbound
+                if (car.getXPosition() < getXStart() - 8) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

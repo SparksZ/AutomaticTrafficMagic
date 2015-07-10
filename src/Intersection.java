@@ -10,7 +10,6 @@ public class Intersection implements Updateable, CarContainer {
                                       road doesn't exist */
     private double northStart;
     private double northEnd;
-    private CopyOnWriteArrayList<Double> lengthOfCars;
     private boolean state; // true if N/S is green, false if E/W is green
 	private double lastLightStart;
     private double xPos; // eastern most point of the intersection
@@ -66,13 +65,6 @@ public class Intersection implements Updateable, CarContainer {
         queues.get(2).add(new DummyCar(xPos, yPos - 1000)); // South in green
         queues.get(3).add(new DummyCar(xPos - roadWidth, yPos)); // West in red
 
-
-        // instantiate with no cars in queue
-        lengthOfCars = new CopyOnWriteArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            lengthOfCars.add(0.0);
-        }
-
         lastLightStart = 0; // 0 is the start of the simulation
 
     }
@@ -85,20 +77,7 @@ public class Intersection implements Updateable, CarContainer {
      * @return if the car was added.
      */
     public boolean addCar(int whichRoad, Moveable newCar) {
-        double lOC = lengthOfCars.get(whichRoad);
-        if (lOC + newCar.getLength() + Car.minimumGap >
-                length) {
-            return false;
-        }
-
         queues.get(whichRoad).add(newCar);
-
-//        // Sets the new lead car's (in the incoming road)
-//        if (!roads.get(whichRoad).getCars().isEmpty()) {
-//            roads.get(whichRoad).getCars().get(0).setLeadingCar(newCar);
-//        }
-
-        lengthOfCars.set(whichRoad, lOC + newCar.getLength() + Car.minimumGap);
         return true;
     }
 
@@ -226,36 +205,29 @@ public class Intersection implements Updateable, CarContainer {
                     // Removes cars from the intersection when they reach the end
                     switch (i) {
                         case 0: // North in queue
-                            if (car.getYPosition() > yPos) {
+                            if (car.getYPosition() > yPos - roadWidth) {
+
                                 // Gets the road the car is newly on
                                 next = roads.get(6);
-                                lengthOfCars.set(0, lengthOfCars.get(0) -
-                                        car.getLength() - Car.minimumGap);
                                 removed = true;
                             }
                             break;
                         case 1: // East in queue
-                            if (car.getXPosition() < xPos) {
+                            if (car.getXPosition() < xPos + roadWidth) {
                                 // Gets the road the car is newly on
                                 next = roads.get(7);
-                                lengthOfCars.set(1, lengthOfCars.get(1) -
-                                        car.getLength() - Car.minimumGap);
                                 removed = true;
                             }
                             break;
                         case 2: // South in queue
-                            if (car.getYPosition() < yPos) {
+                            if (car.getYPosition() < yPos + roadWidth) {
                                 next = roads.get(4);
-                                lengthOfCars.set(2, lengthOfCars.get(2) -
-                                        car.getLength() - Car.minimumGap);
                                 removed = true;
                             }
                             break;
                         case 3: // West in queue
-                            if (car.getXPosition() > xPos) {
+                            if (car.getXPosition() > xPos - roadWidth) {
                                 next = roads.get(5);
-                                lengthOfCars.set(3, lengthOfCars.get(3) -
-                                        car.getLength() - Car.minimumGap);
                                 removed = true;
                             }
                             break;
@@ -266,6 +238,14 @@ public class Intersection implements Updateable, CarContainer {
                         car.setLeadingCar(next.getLast());
                         next.addCar(car);
                         q.remove(car);
+
+                        // Sets next lead car's lead car to the dummy
+                        if (q.size() > 1) {
+                            q.get(1).setLeadingCar(q.get(0));
+                        } else {
+                            roads.get(i).getFirst().
+                                    setLeadingCar(q.get(0));
+                        }
                     }
                 }
             }

@@ -20,16 +20,19 @@ public class CarSink implements CarContainer {
 
 
     /**
-     * Adds a car to the sink
+     * Adds a car to the sink and set positions to dummy so they don't back up
+     * on the road.
      * @param car the car to add to the sink
      */
     public boolean addCar(int dummyInt, Moveable car) {
+        car.setXPosition(cars.get(0).getXPosition());
+        car.setYPosition(cars.get(0).getYPosition());
         cars.add(car);
         return true;
     }
 
     @Override
-    public Moveable getLast(int i) {
+    public Moveable getLast(int dummyInt) {
         return cars.get(0);
     }
 
