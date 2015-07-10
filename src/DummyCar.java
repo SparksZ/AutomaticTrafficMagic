@@ -3,20 +3,32 @@
  */
 public class DummyCar implements Moveable {
 
-    private double position;
+    private double xPosition;
+    private double yPosition;
 
-    public DummyCar(double position) {
-        this.position = position;
+    public DummyCar(double xPosition, double yPosition) {
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
     }
 
     @Override
-    public void setPosition(double position) {
-        this.position = position;
+    public void setXPosition(double position) {
+        this.xPosition = position;
     }
 
     @Override
-    public double getPosition() {
-        return position;
+    public void setYPosition(double position) {
+        this.yPosition = position;
+    }
+
+    @Override
+    public double getXPosition() {
+        return xPosition;
+    }
+
+    @Override
+    public double getYPosition() {
+        return yPosition;
     }
 
     @Override
@@ -39,7 +51,12 @@ public class DummyCar implements Moveable {
 
     }
 
+    @Override
+    public void setRoad(Road r) {
+
+    }
+
     public String toString() {
-        return "P:" + position;
+        return "P: (" + xPosition + ", " + yPosition + ")";
     }
 }
