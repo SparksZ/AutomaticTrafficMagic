@@ -20,8 +20,8 @@ public class Intersection implements Updateable, CarContainer {
 
 
     // CONSTANTS
-    private final double nSLightLength = 15;
-    private final double eWLightLength = 15;
+    private final double nSLightLength = 30;
+    private final double eWLightLength = 30;
     private final double speedLimit = 16;
     private final int secondsPerCar = 5;
     public static final double length = 75; // length of intersection (m)
@@ -243,8 +243,13 @@ public class Intersection implements Updateable, CarContainer {
                         if (q.size() > 1) {
                             q.get(1).setLeadingCar(q.get(0));
                         } else {
-                            roads.get(i).getFirst().
-                                    setLeadingCar(q.get(0));
+                            /* If the preceding road is empty don't need to set
+                               the last lead's car
+                             */
+                            if (!roads.get(i).getCars().isEmpty()) {
+                                roads.get(i).getFirst().
+                                        setLeadingCar(q.get(0));
+                            }
                         }
                     }
                 }
@@ -466,5 +471,30 @@ public class Intersection implements Updateable, CarContainer {
         String ns = (state) ? "Green" : "Red";
         String ew = (state) ? "Red" : "Green";
         return "N/S: " + ns + " E/W: " + ew;
+    }
+
+    /**
+     * Loops over all sinks and provides car data from sinks
+     * @return a vector of (Total Distance, Total Time, # of cars)
+     */
+    public CopyOnWriteArrayList<Double> getSinkData() {
+        CopyOnWriteArrayList<Double> result = new CopyOnWriteArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            result.add(0.0);
+        }
+
+        if (sinks != null) {
+            for (CarSink s : sinks) {
+                CopyOnWriteArrayList<Double> data = s.distanceDurationSize();
+
+                for (int i = 0; i < 3; i++) {
+                    result.set(i, result.get(i) + data.get(i));
+                }
+            }
+
+            return result;
+        } else {
+            return null;
+        }
     }
 }

@@ -66,4 +66,28 @@ public class CarSink implements CarContainer {
 
         return total / cars.size();
     }
+
+    /**
+     * Loops over all cars in sink collecting their data to average
+     * @return a vector of (Total Distance, Total Time, # of cars)
+     */
+    public CopyOnWriteArrayList<Double> distanceDurationSize() {
+        double totalDistance = 0;
+        double totalTime = 0;
+
+        cars.remove(0);
+
+        for (Moveable c : cars) {
+            Car car = (Car) c;
+            totalDistance += car.getDistanceTravelled();
+            totalTime += car.getLifetime();
+        }
+
+        CopyOnWriteArrayList<Double> result = new CopyOnWriteArrayList<>();
+        result.add(totalDistance);
+        result.add(totalTime);
+        result.add((double) cars.size());
+
+        return result;
+    }
 }

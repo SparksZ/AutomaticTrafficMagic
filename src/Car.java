@@ -69,9 +69,9 @@ public class Car implements Moveable {
      * Updates the cars velocity and position based on the frameRate and acceleration/velocity (respectively)
      */
     public void update() {
-        if (leadingCarGap() > 2000) {
-            System.out.println("HERE!");
-        }
+//        if (leadingCarGap() > 2000) {
+//            System.out.println("HERE!");
+//        }
 
         updateVelocity();
         updatePosition();

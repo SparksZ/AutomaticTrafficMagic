@@ -11,27 +11,28 @@ public class Driver {
 
     private static CopyOnWriteArrayList<Intersection> intersections;
     private static double timeElapsed;
+    private static CopyOnWriteArrayList<Double> results;
 
     // CONSTANTS
-    public static final double frameRate = 0.5; // seconds
+    public static final double frameRate = .5; // seconds
 
     public synchronized static void main(String[] args) {
         intersections = new CopyOnWriteArrayList<>();
 
-        createIntersections(2);
+        createIntersections(5);
         connectIntersections();
 
         timeElapsed = 0;
 
-        while (timeElapsed < 28800) {
+        while (timeElapsed < 7200) {
             intersections.forEach(Intersection::update);
 
             timeElapsed += (frameRate);
         }
 
-
-
-        timeElapsed++;
+        System.out.println("The average speed of the cars was: " +
+                averageSpeed() + "m/s. averaging over " + results.get(2) +
+                " cars");
     }
 
     private static void connectIntersections() {
@@ -159,5 +160,23 @@ public class Driver {
         }
 
         return sinkScenario;
+    }
+
+    private static double averageSpeed() {
+        CopyOnWriteArrayList<Double> result = new CopyOnWriteArrayList<>();
+        results = result;
+        for (int i = 0; i < 3; i++) {
+            result.add(0.0);
+        }
+
+        for (Intersection inter : intersections) {
+            CopyOnWriteArrayList<Double> data = inter.getSinkData();
+
+            for (int i = 0; i < 3; i++) {
+                result.set(i, result.get(i) + data.get(i));
+            }
+        }
+
+        return result.get(0) / result.get(1);
     }
 }
