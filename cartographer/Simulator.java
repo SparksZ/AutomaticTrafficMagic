@@ -16,11 +16,10 @@ public class Simulator {
         tabbedPane.addTab("Map", drawingPanel);
         tabbedPane.addTab("Grid", gridPanel);
         simulatorWindow.getContentPane().add(tabbedPane);
-        Road road1 = myMap.makeNewRoad(new Coordinate(20, 101), -5);
-        //Road road1 = myMap.makeNewRoad(new Coordinate(50, 50), -30);
-        Road road2 = myMap.makeNewRoad(new Coordinate(30, 200), 10);
-        Road road3 = myMap.makeNewRoad(new Coordinate(270, 400), -80);
-        Road road4 = myMap.makeNewRoad(new Coordinate(400, 300), -120);
+        myMap.makeNewRoad(new Coordinate(20, 101), -5);
+        myMap.makeNewRoad(new Coordinate(30, 200), 10);
+        myMap.makeNewRoad(new Coordinate(270, 400), -80);
+        myMap.makeNewRoad(new Coordinate(400, 300), -120);
         myMap.makeNewRoad(new Coordinate(150, 350), -90);
         myMap.makeNewRoad(new Coordinate(150, 350), 0);
 

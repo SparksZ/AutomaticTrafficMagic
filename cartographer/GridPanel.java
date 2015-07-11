@@ -41,5 +41,10 @@ public class GridPanel extends JPanel {
                 }
             }
         }
+        g2.setColor(Color.magenta);
+        for (Intersection i : theGrid.getIntersections()) {
+            g2.fillOval(i.getLocation().getX() - 4, mapSize.height - 1 - i.getLocation().getY() - 4, 9, 9);
+        }
+        g2.setColor(Color.black);
     }
 }

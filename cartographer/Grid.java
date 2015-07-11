@@ -7,6 +7,7 @@ public class Grid {
     private GridSquare[][] squares;
     private Dimension mapSize;
     private int[] rowEnds, colEnds;
+    private ArrayList<Intersection> intersections;
 
     public Grid(int edgeLength, Dimension mapSize) {
         this(edgeLength, edgeLength, mapSize);
@@ -16,6 +17,7 @@ public class Grid {
         this.numRows = numRows;
         this.numCols = numCols;
         this.mapSize = mapSize;
+        intersections = new ArrayList<Intersection>();
         int currRowSize, currColSize;
         int rowStartLocation = 0, colStartLocation = 0;
         squares = new GridSquare[numRows][numCols];
@@ -59,6 +61,7 @@ public class Grid {
             waypointsInSquare.add(currWP);
             if (currWP == finalWP) {
                 currentSquare.addRoadSegment(r.getRoadID(), (ArrayList<TimedCoordinate>)waypointsInSquare.clone());
+                findIntersections(currentSquare, r.getRoadID());
                 waypointsInSquare = null;
                 allWaypointsAdded = true;
                 continue;
@@ -74,6 +77,7 @@ public class Grid {
                 waypointsInSquare.add(gridEdgeWaypoint);
                 currentSquare.addRoadSegment(r.getRoadID(), (ArrayList<TimedCoordinate>)waypointsInSquare.clone());
                 nextWP = intersectionWaypoints[1];
+                findIntersections(currentSquare, r.getRoadID());
                 currentSquare = getContainingSquare(nextWP);
                 waypointsInSquare = new ArrayList<TimedCoordinate>();
             }
@@ -120,6 +124,10 @@ public class Grid {
     
     public GridSquare[][] getSquares() {
         return squares;
+    }
+    
+    public ArrayList<Intersection> getIntersections() {
+        return intersections;
     }
 
     /*public boolean addRoadToGridLocation(int row, int col, int roadID) {
@@ -213,5 +221,85 @@ public class Grid {
         // it definitely has nonzero velocity in either one or both directions.
 
         return new TimedCoordinate[]{intersectionWP, postIntersectionWP};
+    }
+    
+    private int findIntersections(GridSquare square, int newRoadID) {
+        for (RoadSegment s : square.getSegments()) {
+            if (s.getRoadID() == newRoadID) {
+                return findIntersections(square, s);
+            }
+        }
+        // iterate over all of its line segments
+            // for each of the other RoadSegments in the square:
+                // for each line segment in the RoadSegment:
+                    // check if the line segments intersect
+                        // if they do, figure out where and add an intersection
+        // this is a good candidate loop for optimizing for the cache
+        return -1;
+    }
+    
+    private int findIntersections(GridSquare square, RoadSegment roadSegment) {
+        ArrayList<TimedCoordinate> waypoints = roadSegment.getWaypoints();
+        ArrayList<RoadSegment> allSegments = square.getSegments();
+        int intersectionX = -1, intersectionY = -1;
+        boolean line1IsVertical = false;
+        for (int newRoadWPIndex = 0; newRoadWPIndex < waypoints.size() - 1; newRoadWPIndex++) {
+            TimedCoordinate currWP = waypoints.get(newRoadWPIndex);
+            TimedCoordinate nextWP = waypoints.get(newRoadWPIndex + 1);
+            int line1DeltaX = nextWP.getX() - currWP.getX();
+            int line1DeltaY = nextWP.getY() - currWP.getY();
+            if (line1DeltaX == 0) { // line is vertical
+                intersectionX = currWP.getX();
+                line1IsVertical = true;
+                System.out.println("Line 1 is vertical!");
+            }
+            else {
+                line1IsVertical = false;
+            }
+            for (int otherRoadIndex = 0; otherRoadIndex < square.getNumRoads(); otherRoadIndex++) {
+                RoadSegment otherRoad = allSegments.get(otherRoadIndex);
+                if (otherRoad.getRoadID() == roadSegment.getRoadID()) {
+                    continue;
+                }
+                ArrayList<TimedCoordinate> otherRoadWaypoints = otherRoad.getWaypoints();
+                for (int otherRoadWPIndex = 0; otherRoadWPIndex < otherRoadWaypoints.size() - 1; otherRoadWPIndex++) {
+                    TimedCoordinate otherCurrWP = otherRoadWaypoints.get(otherRoadWPIndex);
+                    TimedCoordinate otherNextWP = otherRoadWaypoints.get(otherRoadWPIndex + 1);
+                    // check if they intersect using the "det" product technique (credits to Jarek Rossignac)
+                    int line2DeltaX = otherNextWP.getX() - otherCurrWP.getX();
+                    int line2DeltaY = otherNextWP.getY() - otherCurrWP.getY();
+                    if (line1IsVertical) {
+                        if (line2DeltaX == 0) {
+                            continue; // assume both lines are not vertical
+                            // this will neatly handle the case where lines are vertical
+                            // and collinear by assuming they don't intersect.
+                        }
+                        double ratio = (double)(intersectionX - otherCurrWP.getX())/line2DeltaX;
+                        intersectionY = (int)Math.round(otherCurrWP.getY() + ratio*line1DeltaY);
+                        intersections.add(new Intersection(new Coordinate(intersectionX, intersectionY)));
+                    }
+                    else if (line2DeltaX == 0) { // line is vertical
+                        System.out.println("Line 2 is vertical!");
+                        intersectionX = otherCurrWP.getX();
+                        double ratio = (double)(intersectionX - currWP.getX())/line1DeltaX;
+                        intersectionY = (int)Math.round(currWP.getY() + ratio*line2DeltaY);
+                        intersections.add(new Intersection(new Coordinate(intersectionX, intersectionY)));
+                    }
+                    else { // neither line is vertical. This will normally be the case.
+                        // verify lines aren't parallel
+                        if (Math.atan2(line1DeltaY, line1DeltaX) == Math.atan2(line2DeltaY, line2DeltaX)) {
+                            continue;
+                        }
+                        double line1Slope = (double)line1DeltaY/line1DeltaX;
+                        double line2Slope = (double)line2DeltaY/line2DeltaX;
+                        intersectionX = (int)Math.round((double)(line1Slope*currWP.getX() - currWP.getY() - line2Slope*otherCurrWP.getX() + otherCurrWP.getY())/(line1Slope - line2Slope));
+                        intersectionY = (int)Math.round((intersectionX - currWP.getX())*line1Slope + currWP.getY());
+                        intersections.add(new Intersection(new Coordinate(intersectionX, intersectionY)));
+                        System.out.println("Found intersection!");
+                    }
+                }
+            }
+        }
+        return -1;
     }
 }
