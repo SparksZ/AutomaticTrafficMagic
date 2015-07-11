@@ -12,6 +12,7 @@ public class Road implements Updateable {
     private boolean positiveFlow; // Cars travel in positive coordinates (s/e) or not (n/w)
     private CopyOnWriteArrayList<Moveable> cars;
     private double roadLength;
+    public static final double roadWidth = 15;
     private double xWestPos, yNorthPos, xEastPos, ySouthPos;
     private CarContainer carContainer; // sink/intersection at the end of the road
 
@@ -247,12 +248,13 @@ public class Road implements Updateable {
         CopyOnWriteArrayList<Double> result = new CopyOnWriteArrayList<>();
 
         if (nS) {
-            result.add(xEastPos);
 
             if (positiveFlow) { // travelling south
+                result.add(xEastPos - roadWidth);
                 result.add(yNorthPos);
                 result.add(1.0);
             } else { // travelling north
+                result.add(xEastPos);
                 result.add(ySouthPos);
                 result.add(-1.0);
             }
@@ -261,7 +263,7 @@ public class Road implements Updateable {
 
             if (positiveFlow) { // travelling east
                 result.add(xWestPos);
-                result.add(yNorthPos);
+                result.add(yNorthPos + roadWidth);
                 result.add(1.0);
             } else { // travelling west
                 result.add(xEastPos);

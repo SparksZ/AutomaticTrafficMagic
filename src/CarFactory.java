@@ -36,6 +36,6 @@ public class CarFactory implements Updateable {
                 Driver.getTimeElapsed());
         road.addCar(car);
         carsMade++;
-        //Visualization.cars.add(car);
+        Visualization.cars.add(car);
     }
 }
