@@ -356,7 +356,7 @@ public class Road implements Updateable {
                     return true;
                 }
             } else { // Westbound
-                if (car.getXPosition() < getXStart() - 8) {
+                if (car.getXPosition() > getXStart() - 8) {
                     return true;
                 }
             }
