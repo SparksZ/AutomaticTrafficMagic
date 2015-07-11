@@ -13,7 +13,8 @@ public class Car implements Moveable {
     private Road road;
     private Moveable leadingCar;
     private final boolean aggressive;
-    private boolean nS; // specifies if the car is traveling north/south or not (east/west)
+    private boolean nS; // specifies if the car is traveling north/south or not
+                        // (east/west)
     int direction; // -1 for north/west +1 for south/east
     private Random r = new Random(1);
 
@@ -21,8 +22,11 @@ public class Car implements Moveable {
     // CONSTANTS
     public static final double ACCEL = 1.25; // m/s^2 typical number
     public static final double cLength = 4; // meters
-    public static final double timeHeadway = 1.5; // seconds between cars desired (might need to be lower for city driving)
-    public static final double minimumGap = 2.0; // meters between cars at standstill
+    public static final double timeHeadway = 1.5; // seconds between cars
+                                                  // desired (might need to be
+                                                  // lower for city driving)
+    public static final double minimumGap = 2.0; // meters between cars at
+                                                 // standstill
 
     /**
      * Constructs a new Car object
@@ -66,7 +70,8 @@ public class Car implements Moveable {
     }
 
     /**
-     * Updates the cars velocity and position based on the frameRate and acceleration/velocity (respectively)
+     * Updates the cars velocity and position based on the frameRate and
+     * acceleration/velocity (respectively)
      */
     public void update() {
 //        if (leadingCarGap() > 2000) {

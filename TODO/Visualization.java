@@ -1,45 +1,78 @@
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
-import java.util.*;
+import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
- * Created by Zack on 7/4/2015.
+ * Created by Zack on 7/10/2015.
  */
-public class Driver {
+public class Visualization extends Application {
 
     private static CopyOnWriteArrayList<Intersection> intersections;
     private static double timeElapsed;
     private static CopyOnWriteArrayList<Double> results;
     private static double simulationTime;
+    public static CopyOnWriteArrayList<Car> cars;
 
     // CONSTANTS
     public static final double frameRate = .5; // seconds
 
-    public synchronized static void main(String[] args) {
+    private Group root;
+    private Scene scene;
+
+    private Pane carLayer;
+
+    // will represent car
+    private Rectangle r;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        root = new Group();
+        carLayer = new Pane();
+
+        primaryStage.setTitle("Traffic Simulator!");
+        primaryStage.setResizable(false);
+
+        scene = new Scene(root, 1000, 1000);
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+        loadgame();
+
+        AnimationTimer simLoop = new AnimationTimer() {
+
+            @Override
+            public void handle(long now) {
+                intersections.forEach(Intersection::update);
+                timeElapsed += frameRate;
+
+
+            }
+        }
+    }
+
+    private void loadgame() {
+        r = new Rectangle(1, 2, Color.BLACK);
         intersections = new CopyOnWriteArrayList<>();
 
-        createIntersections(2);
+        createIntersections(5);
         connectIntersections();
         simulationTime = 7200;
+        cars = new CopyOnWriteArrayList<>();
 
         timeElapsed = 0;
-
-        while (timeElapsed < simulationTime) {
-            intersections.forEach(Intersection::update);
-
-            if (timeElapsed % 360 == 0) {
-                clearConsole();
-                System.out.println(timeElapsed / simulationTime * 100 + "% \r");
-            }
-
-            timeElapsed += (frameRate);
-        }
-
-        System.out.println("The average speed of the cars was: " +
-                averageSpeed() + " m/s. averaging over " + results.get(2) +
-                " cars");
     }
 
     public static void connectIntersections() {
@@ -172,42 +205,5 @@ public class Driver {
         }
 
         return result.get(0) / result.get(1);
-    }
-
-    public final static void clearConsole()
-    {
-        try
-        {
-            final String os = System.getProperty("os.name");
-
-            if (os.contains("Windows"))
-            {
-                Runtime.getRuntime().exec("cls");
-            }
-            else
-            {
-                Runtime.getRuntime().exec("clear");
-            }
-        }
-        catch (final Exception e)
-        {
-            //  Handle any exceptions.
-        }
-    }
-
-    public static String progressBar() {
-        StringBuilder sB = new StringBuilder();
-        sB.append("|");
-        if (timeElapsed % (simulationTime * 0.05) == 0) {
-            for (int i = 0; i < 20; i++ ){
-                if (timeElapsed > simulationTime * 0.05 * i) {
-                    sB.append("=");
-                } else {
-                    sB.append(" ");
-                }
-            }
-        }
-        sB.append("|");
-        return sB.toString();
     }
 }
