@@ -145,9 +145,9 @@ public class Intersection implements Updateable, CarContainer {
                 nSLightLength) { // NS light needs to change to red
 
             // Updating Dummies
-            queues.get(0).set(0, new DummyCar(xPos, yPos - roadWidth)); // North In
+            queues.get(0).set(0, new DummyCar(xPos, yPos)); // North In
             queues.get(1).set(0, new DummyCar(xPos - 1000, yPos)); // East In
-            queues.get(2).set(0, new DummyCar(xPos, yPos + roadWidth)); // South In
+            queues.get(2).set(0, new DummyCar(xPos, yPos)); // South In
             queues.get(3).set(0, new DummyCar(xPos + 1000, yPos)); // West In
 
             state = false;
@@ -163,9 +163,9 @@ public class Intersection implements Updateable, CarContainer {
 
             // Updating Dummies
             queues.get(0).set(0, new DummyCar(xPos, yPos + 1000)); // North in green
-            queues.get(1).set(0, new DummyCar(xPos - roadWidth, yPos)); // East in red
+            queues.get(1).set(0, new DummyCar(xPos, yPos)); // East in red
             queues.get(2).set(0, new DummyCar(xPos, yPos - 1000)); // South in green
-            queues.get(3).set(0, new DummyCar(xPos - roadWidth, yPos)); // West in red
+            queues.get(3).set(0, new DummyCar(xPos, yPos)); // West in red
 
             state = true;
             lastLightStart = Driver.getTimeElapsed();
