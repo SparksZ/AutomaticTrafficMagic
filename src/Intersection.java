@@ -213,7 +213,8 @@ public class Intersection implements Updateable, CarContainer {
                             }
                             break;
                         case 1: // East in queue
-                            if (car.getXPosition() < xPos + roadWidth) {
+                            if (car.getXPosition() < xPos - length +
+                                    roadWidth) {
                                 // Gets the road the car is newly on
                                 next = roads.get(7);
                                 removed = true;
