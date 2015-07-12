@@ -14,8 +14,8 @@ public class Driver {
     private static double timeElapsed;
     private static CopyOnWriteArrayList<Double> results;
     private static double simulationTime;
-    private static int numIntersectionsPerSide = 2;
-    private static int finalMapSize = 2000 + (int)((numIntersectionsPerSide + 1)*(Intersection.length + Intersection.roadLength));
+    private static int numIntersectionsPerSide = 3;
+    private static int finalMapSize = (int)((numIntersectionsPerSide + 1)*(Intersection.length + Intersection.roadLength));
 
     // CONSTANTS
     public static final double frameRate = .5; // seconds
