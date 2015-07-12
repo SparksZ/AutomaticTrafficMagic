@@ -20,7 +20,7 @@ public class Driver {
     public synchronized static void main(String[] args) {
         intersections = new CopyOnWriteArrayList<>();
 
-        createIntersections(2);
+        createIntersections(3);
         connectIntersections();
         simulationTime = 7200;
 
@@ -29,9 +29,13 @@ public class Driver {
         while (timeElapsed < simulationTime) {
             intersections.forEach(Intersection::update);
 
-            if (timeElapsed % 360 == 0) {
-                clearConsole();
-                System.out.println(timeElapsed / simulationTime * 100 + "% \r");
+//            if (timeElapsed % 360 == 0) {
+//                clearConsole();
+//                System.out.println(timeElapsed / simulationTime * 100 + "% \r");
+//            }
+
+            if (timeElapsed != 0 && timeElapsed % 85 == 0) {
+                System.out.println("Stop!");
             }
 
             timeElapsed += (frameRate);
