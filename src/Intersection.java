@@ -153,7 +153,7 @@ public class Intersection implements Updateable, CarContainer {
             state = false;
             lastLightStart = Driver.getTimeElapsed();
 
-            checkForRunners();
+            //checkForRunners();
 
             changed = true;
         }
@@ -170,7 +170,7 @@ public class Intersection implements Updateable, CarContainer {
             state = true;
             lastLightStart = Driver.getTimeElapsed();
 
-            checkForRunners();
+            //checkForRunners();
             changed = true;
         }
 
