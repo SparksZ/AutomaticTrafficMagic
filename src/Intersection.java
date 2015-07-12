@@ -141,7 +141,7 @@ public class Intersection implements Updateable, CarContainer {
      */
     private void updateRoadDummy() {
         boolean changed = false;
-        if (state == true && (Visualization.getTimeElapsed() - lastLightStart) ==
+        if (state && (Visualization.getTimeElapsed() - lastLightStart) ==
                 nSLightLength) { // NS light needs to change to red
 
             // Updating Dummies
@@ -155,7 +155,7 @@ public class Intersection implements Updateable, CarContainer {
             changed = true;
         }
 
-        if (state == false && (Visualization.getTimeElapsed() - lastLightStart) ==
+        if (!state && (Visualization.getTimeElapsed() - lastLightStart) ==
                 eWLightLength) { // NS light needs to change to green
 
             // Updating Dummies
