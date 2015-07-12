@@ -1,4 +1,5 @@
 
+import javax.swing.JFrame;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
@@ -13,6 +14,8 @@ public class Driver {
     private static double timeElapsed;
     private static CopyOnWriteArrayList<Double> results;
     private static double simulationTime;
+    private static int numIntersectionsPerSide = 2;
+    private static int finalMapSize = 2000 + (int)((numIntersectionsPerSide + 1)*(Intersection.length + Intersection.roadLength));
 
     // CONSTANTS
     public static final double frameRate = .5; // seconds
@@ -20,16 +23,24 @@ public class Driver {
     public synchronized static void main(String[] args) {
         intersections = new CopyOnWriteArrayList<>();
 
-        createIntersections(2);
+        createIntersections(numIntersectionsPerSide);
         connectIntersections();
         simulationTime = 7200;
+        int checkpointTimeStep = (int)(simulationTime/20);
 
         timeElapsed = 0;
+
+        JFrame simulatorWindow = new JFrame("Automatic Traffic Magic");
+        MapPanel drawingPanel = new MapPanel(finalMapSize, intersections);
+        simulatorWindow.add(drawingPanel);
+        simulatorWindow.pack();
+        simulatorWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        simulatorWindow.setVisible(true);
 
         while (timeElapsed < simulationTime) {
             intersections.forEach(Intersection::update);
 
-            if (timeElapsed % 360 == 0) {
+            if (timeElapsed % checkpointTimeStep == 0) {
                 clearConsole();
                 System.out.println(timeElapsed / simulationTime * 100 + "% \r");
             }

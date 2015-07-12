@@ -262,7 +262,7 @@ public class Intersection implements Updateable, CarContainer {
                         car.setLeadingCar(next.getLast());
                         next.addCar(car);
                         q.remove(car);
-                        
+
                         if(route != 0){
                         	car.setXPosition(next.getXStart());
                         	car.setYPosition(next.getYStart());
@@ -299,11 +299,11 @@ public class Intersection implements Updateable, CarContainer {
                                   behavior of the cars approaching traffic
                                   lights/intersections */
     }
-	
+
 	/**
 	 * Override for equals method to see if two
 	 * intersections are equal.
-	 * 
+	 *
 	 * @param toCompareTo
 	 * 				Intersection to compare to
 	 * @return	True if the intersections are equal.
@@ -318,14 +318,14 @@ public class Intersection implements Updateable, CarContainer {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Checks if the intersection is connected
 	 * to a road.
-	 * 
+	 *
 	 * @param road
 	 * 			Road to check against
-	 * @return	True if road and intersection are 
+	 * @return	True if road and intersection are
 	 * 			connected. False otherwise.
 	 */
 	public boolean hasRoad(Road road){
@@ -525,5 +525,13 @@ public class Intersection implements Updateable, CarContainer {
         } else {
             return null;
         }
+    }
+
+    public int getX() {
+        return (int)xPos;
+    }
+
+    public int getY() {
+        return (int)yPos;
     }
 }
