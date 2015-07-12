@@ -54,7 +54,7 @@ public class Driver {
     }
 
     public static void connectIntersections() {
-        int y = (int) Math.sqrt(intersections.size());
+        int y = numIntersectionsPerSide;
 
         for (int i = 0; i < y; i++) { // Rows of intersections
             for (int j = 0; j < y; j++) { // Columns of intersections
