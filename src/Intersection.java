@@ -23,7 +23,7 @@ public class Intersection implements Updateable, CarContainer {
     private double nSLightLength = 90;
     private double eWLightLength = 90;
     private final double speedLimit = 16;
-    private final int secondsPerCar = 7;
+    private final int secondsPerCar = 10;
     public static final double length = 75; // length of intersection (m)
     public static final double roadLength = 200;
     public static final double roadWidth = 15;
@@ -145,13 +145,16 @@ public class Intersection implements Updateable, CarContainer {
                 nSLightLength) { // NS light needs to change to red
 
             // Updating Dummies
-            queues.get(0).set(0, new DummyCar(xPos, yPos)); // North In
+            queues.get(0).set(0, new DummyCar(xPos, yPos - roadWidth)); // North In
             queues.get(1).set(0, new DummyCar(xPos - 1000, yPos)); // East In
-            queues.get(2).set(0, new DummyCar(xPos, yPos)); // South In
+            queues.get(2).set(0, new DummyCar(xPos, yPos + roadWidth)); // South In
             queues.get(3).set(0, new DummyCar(xPos + 1000, yPos)); // West In
 
             state = false;
             lastLightStart = Visualization.getTimeElapsed();
+
+            checkForRunners();
+
             changed = true;
         }
 
@@ -160,12 +163,14 @@ public class Intersection implements Updateable, CarContainer {
 
             // Updating Dummies
             queues.get(0).set(0, new DummyCar(xPos, yPos + 1000)); // North in green
-            queues.get(1).set(0, new DummyCar(xPos, yPos)); // East in red
+            queues.get(1).set(0, new DummyCar(xPos - roadWidth, yPos)); // East in red
             queues.get(2).set(0, new DummyCar(xPos, yPos - 1000)); // South in green
-            queues.get(3).set(0, new DummyCar(xPos, yPos)); // West in red
+            queues.get(3).set(0, new DummyCar(xPos - roadWidth, yPos)); // West in red
 
             state = true;
             lastLightStart = Visualization.getTimeElapsed();
+
+            checkForRunners();
             changed = true;
         }
 
@@ -185,6 +190,74 @@ public class Intersection implements Updateable, CarContainer {
 
                 if (!cars.isEmpty()) {
                     cars.get(0).setLeadingCar(getLast(i));
+                }
+            }
+        }
+    }
+
+    private void checkForRunners() {
+        for (int i = 0; i < 4; i++) {
+            CopyOnWriteArrayList<Moveable> q = queues.get(i);
+
+            if (q.size() > 1) {
+                switch (i) {
+                    case 0: // North in
+                        if (!state) {
+                            int j = 1;
+
+                            while (j < q.size() && q.get(j).getYPosition() >= q.get(0).getYPosition()) {
+                                q.get(j).setLeadingCar(roads.get(6).getLast());
+                                j++;
+                            }
+
+                            if (j < q.size()) {
+                                q.get(j).setLeadingCar(q.get(0));
+                            }
+                        }
+                        break;
+                    case 1: // East in
+                        if (state) {
+                            int j = 1;
+
+                            while (j < q.size() && q.get(j).getXPosition() <= q.get(0).getXPosition()) {
+                                q.get(j).setLeadingCar(roads.get(7).getLast());
+                                j++;
+                            }
+
+                            if (j < q.size()) {
+                                q.get(j).setLeadingCar(q.get(0));
+                            }
+                        }
+                        break;
+                    case 2: // South in
+                        if (!state) {
+                            int j = 1;
+
+                            while (j < q.size() && q.get(j).getYPosition() <= q.get(0).getYPosition()) {
+                                q.get(j).setLeadingCar(roads.get(4).getLast());
+                                j++;
+                            }
+
+                            if (j < q.size()) {
+                                q.get(j).setLeadingCar(q.get(0));
+                            }
+                        }
+                        break;
+                    case 3: // West in
+                        if (!state) {
+                            int j = 1;
+
+                            while (j < q.size() && q.get(j).getXPosition() >= q.get(0).getXPosition()) {
+                                q.get(j).setLeadingCar(roads.get(5).getLast());
+                                j++;
+                            }
+
+                            if (j < q.size()) {
+                                q.get(j).setLeadingCar(q.get(0));
+                            }
+                        }
+                        break;
+
                 }
             }
         }
