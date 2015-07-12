@@ -155,7 +155,7 @@ public class Intersection implements Updateable, CarContainer {
             changed = true;
         }
 
-        if (state && (Driver.getTimeElapsed() - lastLightStart) ==
+        if (!state && (Driver.getTimeElapsed() - lastLightStart) ==
                 eWLightLength) { // NS light needs to change to green
 
             // Updating Dummies
