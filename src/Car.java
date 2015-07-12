@@ -1,3 +1,7 @@
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
+
+import javafx.scene.paint.Color;
 import java.text.DecimalFormat;
 import java.util.Random;
 
@@ -7,6 +11,11 @@ import java.util.Random;
  * @version 1.0
  */
 public class Car implements Moveable {
+
+    //Visualization stuff
+    public Rectangle rect;
+    public Pane layer;
+
     private double distanceTravelled;
     private double xPosition, yPosition, velocity, acceleration, deceleration,
             aggressiveFactor, desiredV, startTime, endTime;
@@ -18,9 +27,11 @@ public class Car implements Moveable {
     int direction; // -1 for north/west +1 for south/east
     private Random r = new Random(1);
 
+    private Pane Layer;
+
 
     // CONSTANTS
-    public static final double ACCEL = 1.25; // m/s^2 typical number
+    public static final double ACCEL = .25; // m/s^2 typical number
     public static final double cLength = 4; // meters
     public static final double timeHeadway = 1.5; // seconds between cars
                                                   // desired (might need to be
@@ -67,6 +78,11 @@ public class Car implements Moveable {
         acceleration = aggressiveFactor * ACCEL;
         deceleration = aggressiveFactor * ACCEL;
         desiredV = aggressiveFactor * road.getSpeedLimit();
+
+        rect = new Rectangle(2, 2, Color.BLACK);
+        rect.relocate(xPosition - 1000, yPosition - 1000);
+
+        Visualization.carLayer.getChildren().add(rect);
     }
 
     /**
@@ -265,5 +281,9 @@ public class Car implements Moveable {
         Car that = (Car) o;
         return (that.getXPosition() == this.xPosition) && (that.getYPosition()
                 == this.yPosition);
+    }
+
+    public void updateUI() {
+        rect.relocate(xPosition - 1000, yPosition - 1000);
     }
 }

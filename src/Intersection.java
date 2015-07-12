@@ -20,10 +20,10 @@ public class Intersection implements Updateable, CarContainer {
 
 
     // CONSTANTS
-    private final double nSLightLength = 90;
-    private final double eWLightLength = 90;
+    private double nSLightLength = 90;
+    private double eWLightLength = 90;
     private final double speedLimit = 16;
-    private final int secondsPerCar = 5;
+    private final int secondsPerCar = 15;
     public static final double length = 75; // length of intersection (m)
     public static final double roadLength = 200;
     public static final double roadWidth = 15;
@@ -31,7 +31,7 @@ public class Intersection implements Updateable, CarContainer {
     /**
      * Instantiates a new intersection.  This creates all roads north and west
      * of the intersection. The east and south roads will be connected by the
-     * Driver of the simulation.  For now all are started with NS green EW red.
+     * Visualization of the simulation.  For now all are started with NS green EW red.
      * @param x The southern most limit of the intersection
      * @param y The eastern most limit of the intersection
      * @param sinkScenario -1...8 to specify what roads need to be connected to
@@ -61,9 +61,9 @@ public class Intersection implements Updateable, CarContainer {
 
         state = true;
         queues.get(0).add(new DummyCar(xPos, yPos + 1000)); // North in green
-        queues.get(1).add(new DummyCar(xPos - roadWidth, yPos)); // East in red
+        queues.get(1).add(new DummyCar(xPos, yPos)); // East in red
         queues.get(2).add(new DummyCar(xPos, yPos - 1000)); // South in green
-        queues.get(3).add(new DummyCar(xPos - roadWidth, yPos)); // West in red
+        queues.get(3).add(new DummyCar(xPos, yPos)); // West in red
 
         lastLightStart = 0; // 0 is the start of the simulation
 
@@ -141,7 +141,7 @@ public class Intersection implements Updateable, CarContainer {
      */
     private void updateRoadDummy() {
         boolean changed = false;
-        if (state && (Driver.getTimeElapsed() - lastLightStart) ==
+        if (state && (Visualization.getTimeElapsed() - lastLightStart) ==
                 nSLightLength) { // NS light needs to change to red
 
             // Updating Dummies
@@ -158,7 +158,7 @@ public class Intersection implements Updateable, CarContainer {
             changed = true;
         }
 
-        if (!state && (Driver.getTimeElapsed() - lastLightStart) ==
+        if (!state && (Visualization.getTimeElapsed() - lastLightStart) ==
                 eWLightLength) { // NS light needs to change to green
 
             // Updating Dummies
@@ -275,7 +275,7 @@ public class Intersection implements Updateable, CarContainer {
         // Advances Cars in Queues
         for (int i = 0; i < 4; i++) { // loops through queues
             CopyOnWriteArrayList<Moveable> q = queues.get(i);
-            if (q.size() > 1) {
+            if (q.size() > 1) { // First car is dummy
                 for (int j = 1; j < q.size(); j++) { // loops through cars in queue
                     Moveable car = q.get(j);
                     car.update();
@@ -286,7 +286,7 @@ public class Intersection implements Updateable, CarContainer {
                     // Removes cars from the intersection when they reach the end
                     switch (i) {
                         case 0: // North in queue
-                            if (car.getYPosition() > yPos - roadWidth) {
+                            if (car.getYPosition() > yPos) {
 
                                 // Gets the road the car is newly on
                                 next = roads.get(6);
@@ -294,22 +294,20 @@ public class Intersection implements Updateable, CarContainer {
                             }
                             break;
                         case 1: // East in queue
-                            if (car.getXPosition() < xPos - length +
-                                    roadWidth) {
+                            if (car.getXPosition() < xPos) {
                                 // Gets the road the car is newly on
                                 next = roads.get(7);
                                 removed = true;
                             }
                             break;
                         case 2: // South in queue
-                            if (car.getYPosition() < yPos - length +
-                                    roadWidth) {
+                            if (car.getYPosition() < yPos) {
                                 next = roads.get(4);
                                 removed = true;
                             }
                             break;
                         case 3: // West in queue
-                            if (car.getXPosition() > xPos - roadWidth) {
+                            if (car.getXPosition() > xPos) {
                                 next = roads.get(5);
                                 removed = true;
                             }
@@ -438,7 +436,7 @@ public class Intersection implements Updateable, CarContainer {
      * or factories if appropriate
      */
     private void setUpRoads() {
-        /* Create North and West Roads (Driver will connect others after all
+        /* Create North and West Roads (Visualization will connect others after all
            instantiated) unless factory or sink */
         roads = new CopyOnWriteArrayList<>();
 
@@ -579,5 +577,21 @@ public class Intersection implements Updateable, CarContainer {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Changes the light length of the NS light in this intersection
+     * @param t new time
+     */
+    public void setNSLightLength(double t) {
+        nSLightLength = t;
+    }
+
+    /**
+     * Changes the light length of the NS light in this intersection
+     * @param t new time
+     */
+    public void setEWLightLength(double t) {
+        eWLightLength = t;
     }
 }

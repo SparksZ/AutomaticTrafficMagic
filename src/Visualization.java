@@ -16,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Visualization extends Application {
 
     private static CopyOnWriteArrayList<Intersection> intersections;
-    private static double timeElapsed;
+    public static double timeElapsed;
     private static CopyOnWriteArrayList<Double> results;
     private static double simulationTime;
     public static CopyOnWriteArrayList<Car> cars;
@@ -27,10 +27,8 @@ public class Visualization extends Application {
     private Group root;
     private Scene scene;
 
-    private Pane carLayer;
-
     // will represent car
-    private Rectangle r;
+    public static Pane carLayer;
 
     public static void main(String[] args) {
         launch(args);
@@ -42,9 +40,11 @@ public class Visualization extends Application {
         carLayer = new Pane();
 
         primaryStage.setTitle("Traffic Simulator!");
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
 
         scene = new Scene(root, 1000, 1000);
+
+        root.getChildren().add(carLayer);
 
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -58,16 +58,16 @@ public class Visualization extends Application {
                 intersections.forEach(Intersection::update);
                 timeElapsed += frameRate;
 
-
+                cars.forEach(Car::updateUI);
             }
-        }
+        };
+        simLoop.start();
     }
 
     private void loadgame() {
-        r = new Rectangle(1, 2, Color.BLACK);
         intersections = new CopyOnWriteArrayList<>();
 
-        createIntersections(5);
+        createIntersections(3);
         connectIntersections();
         simulationTime = 7200;
         cars = new CopyOnWriteArrayList<>();
