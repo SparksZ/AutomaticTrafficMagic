@@ -284,31 +284,56 @@ public class Intersection implements Updateable, CarContainer {
                     boolean removed = false;
 
                     // Removes cars from the intersection when they reach the end
+                    int route = car.route();
                     switch (i) {
                         case 0: // North in queue
-                            if (car.getYPosition() > yPos) {
 
+                            if (car.getYPosition() > yPos) {
                                 // Gets the road the car is newly on
-                                next = roads.get(6);
+                            	if (route == 0) {
+                            		next = roads.get(6);
+                            	} else if (route == 1) {
+                            		next = roads.get(5);
+                            	} else {
+                            		next = roads.get(7);
+                            	}
                                 removed = true;
                             }
                             break;
                         case 1: // East in queue
                             if (car.getXPosition() < xPos) {
                                 // Gets the road the car is newly on
-                                next = roads.get(7);
+                                if (route == 0) {
+                            		next = roads.get(7);
+                            	} else if (route == 1) {
+                            		next = roads.get(6);
+                            	} else {
+                            		next = roads.get(4);
+                            	}
                                 removed = true;
                             }
                             break;
                         case 2: // South in queue
                             if (car.getYPosition() < yPos) {
-                                next = roads.get(4);
+                                if (route == 0) {
+                            		next = roads.get(4);
+                            	} else if (route == 1) {
+                            		next = roads.get(5);
+                            	} else {
+                            		next = roads.get(7);
+                            	}
                                 removed = true;
                             }
                             break;
                         case 3: // West in queue
-                            if (car.getXPosition() > xPos) {
-                                next = roads.get(5);
+                            if (car.getXPosition() > xPos - roadWidth) {
+                                if (route == 0) {
+                            		next = roads.get(5);
+                            	} else if (route == 1) {
+                            		next = roads.get(6);
+                            	} else {
+                            		next = roads.get(4);
+                            	}
                                 removed = true;
                             }
                             break;
@@ -319,6 +344,11 @@ public class Intersection implements Updateable, CarContainer {
                         car.setLeadingCar(next.getLast());
                         next.addCar(car);
                         q.remove(car);
+                        
+                        if(route != 0){
+                        	car.setXPosition(next.getXStart());
+                        	car.setYPosition(next.getYStart());
+                        }
 
                         // Sets next lead car's lead car to the dummy
                         if (q.size() > 1) {

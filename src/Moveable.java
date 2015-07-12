@@ -12,4 +12,5 @@ public interface Moveable extends Updateable {
     double getLength();
     void setLeadingCar(Moveable leadingCar);
     void setRoad(Road r);
+    int route();
 }

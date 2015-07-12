@@ -24,8 +24,12 @@ public class Car implements Moveable {
     private final boolean aggressive;
     private boolean nS; // specifies if the car is traveling north/south or not
                         // (east/west)
+    private boolean north;
+    private boolean west;
     int direction; // -1 for north/west +1 for south/east
     private Random r = new Random(1);
+    private int carID;
+    private int intersectionNum;
 
     private Pane Layer;
 
@@ -38,6 +42,7 @@ public class Car implements Moveable {
                                                   // lower for city driving)
     public static final double minimumGap = 2.0; // meters between cars at
                                                  // standstill
+    public static final long SEED = 0x89bb4d51;
 
     /**
      * Constructs a new Car object
@@ -55,7 +60,7 @@ public class Car implements Moveable {
      */
     public Car(double xPosition, double yPosition, double velocity, Road road,
                Moveable leadingCar, boolean nS, int direction,
-               double startTime) {
+               double startTime, int carID) {
         this.distanceTravelled = 0;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
@@ -65,6 +70,9 @@ public class Car implements Moveable {
         this.nS = nS;
         this.direction = direction;
         this.startTime = startTime;
+        this.carID = carID;
+        intersectionNum = 0;
+        r.setSeed(SEED ^ carID);
 
         if (r.nextDouble() < .75) {
             aggressive = false;
@@ -73,6 +81,22 @@ public class Car implements Moveable {
         } else {
             aggressive = true;
             aggressiveFactor = 1.15;
+        }
+        
+        if (nS) {
+        	if (direction > 0) {
+        		north = true;
+        	} else {
+        		north = false;
+        	}
+        	west = r.nextBoolean();
+        } else {
+        	if (direction > 0) {
+        		west = true;
+        	} else {
+        		west = false;
+        	}
+        	north = r.nextBoolean();
         }
 
         acceleration = aggressiveFactor * ACCEL;
@@ -263,6 +287,8 @@ public class Car implements Moveable {
 
     public void setRoad(Road r) {
         road = r;
+        nS = road.isNS();
+        direction = road.isPositiveFlow() ? 1 : -1;
     }
 
     /**
@@ -285,5 +311,18 @@ public class Car implements Moveable {
 
     public void updateUI() {
         rect.relocate(xPosition - 1000, yPosition - 1000);
+    }
+    
+    public int route() {
+    	r.setSeed(SEED ^ (carID + intersectionNum));
+    	if (r.nextBoolean()) {
+    		if (nS) {
+    			return west ? 1 : -1;
+    		} else {
+    			return north ? 1 : -1;
+    		}
+    	} else {
+    		return 0;
+    	}
     }
 }
