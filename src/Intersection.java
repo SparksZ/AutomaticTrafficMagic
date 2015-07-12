@@ -23,7 +23,7 @@ public class Intersection implements Updateable, CarContainer {
     private double nSLightLength = 90;
     private double eWLightLength = 90;
     private final double speedLimit = 16;
-    private final int secondsPerCar = 10;
+    private final int secondsPerCar = 15;
     public static final double length = 75; // length of intersection (m)
     public static final double roadLength = 200;
     public static final double roadWidth = 15;
@@ -153,7 +153,7 @@ public class Intersection implements Updateable, CarContainer {
             state = false;
             lastLightStart = Visualization.getTimeElapsed();
 
-            checkForRunners();
+           // checkForRunners();
 
             changed = true;
         }
@@ -170,7 +170,7 @@ public class Intersection implements Updateable, CarContainer {
             state = true;
             lastLightStart = Visualization.getTimeElapsed();
 
-            checkForRunners();
+          //  checkForRunners();
             changed = true;
         }
 
@@ -212,6 +212,8 @@ public class Intersection implements Updateable, CarContainer {
 
                             if (j < q.size()) {
                                 q.get(j).setLeadingCar(q.get(0));
+                            } else {
+                                roads.get(i).getFirst().setLeadingCar(q.get(0));
                             }
                         }
                         break;
@@ -226,6 +228,8 @@ public class Intersection implements Updateable, CarContainer {
 
                             if (j < q.size()) {
                                 q.get(j).setLeadingCar(q.get(0));
+                            } else {
+                                roads.get(i).getFirst().setLeadingCar(q.get(0));
                             }
                         }
                         break;
@@ -240,6 +244,8 @@ public class Intersection implements Updateable, CarContainer {
 
                             if (j < q.size()) {
                                 q.get(j).setLeadingCar(q.get(0));
+                            } else {
+                                roads.get(i).getFirst().setLeadingCar(q.get(0));
                             }
                         }
                         break;
@@ -254,6 +260,8 @@ public class Intersection implements Updateable, CarContainer {
 
                             if (j < q.size()) {
                                 q.get(j).setLeadingCar(q.get(0));
+                            } else {
+                                roads.get(i).getFirst().setLeadingCar(q.get(0));
                             }
                         }
                         break;

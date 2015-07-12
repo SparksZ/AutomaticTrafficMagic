@@ -31,7 +31,7 @@ public class Car implements Moveable {
 
 
     // CONSTANTS
-    public static final double ACCEL = 1.25; // m/s^2 typical number
+    public static final double ACCEL = .25; // m/s^2 typical number
     public static final double cLength = 4; // meters
     public static final double timeHeadway = 1.5; // seconds between cars
                                                   // desired (might need to be
