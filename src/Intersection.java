@@ -212,6 +212,8 @@ public class Intersection implements Updateable, CarContainer {
 
                             if (j < q.size()) {
                                 q.get(j).setLeadingCar(q.get(0));
+                            } else {
+                                roads.get(i).getFirst().setLeadingCar(q.get(0));
                             }
                         }
                         break;
@@ -226,6 +228,8 @@ public class Intersection implements Updateable, CarContainer {
 
                             if (j < q.size()) {
                                 q.get(j).setLeadingCar(q.get(0));
+                            } else {
+                                roads.get(i).getFirst().setLeadingCar(q.get(0));
                             }
                         }
                         break;
@@ -240,6 +244,8 @@ public class Intersection implements Updateable, CarContainer {
 
                             if (j < q.size()) {
                                 q.get(j).setLeadingCar(q.get(0));
+                            } else {
+                                roads.get(i).getFirst().setLeadingCar(q.get(0));
                             }
                         }
                         break;
@@ -254,6 +260,8 @@ public class Intersection implements Updateable, CarContainer {
 
                             if (j < q.size()) {
                                 q.get(j).setLeadingCar(q.get(0));
+                            } else {
+                                roads.get(i).getFirst().setLeadingCar(q.get(0));
                             }
                         }
                         break;
