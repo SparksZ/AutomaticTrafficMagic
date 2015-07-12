@@ -17,7 +17,7 @@ public class CarFactory implements Updateable {
      * Check if should add car does if suppose to!
      */
     public void update() {
-        if (Driver.getTimeElapsed() % secondsPerCar == 0) {
+        if (Visualization.getTimeElapsed() % secondsPerCar == 0) {
             if (!road.isFull()) {
                 makeCar();
             }

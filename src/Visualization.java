@@ -40,7 +40,7 @@ public class Visualization extends Application {
         carLayer = new Pane();
 
         primaryStage.setTitle("Traffic Simulator!");
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
 
         scene = new Scene(root, 1000, 1000);
 
@@ -67,7 +67,7 @@ public class Visualization extends Application {
     private void loadgame() {
         intersections = new CopyOnWriteArrayList<>();
 
-        createIntersections(2);
+        createIntersections(3);
         connectIntersections();
         simulationTime = 7200;
         cars = new CopyOnWriteArrayList<>();

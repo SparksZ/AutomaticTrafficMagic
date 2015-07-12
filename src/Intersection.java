@@ -20,10 +20,10 @@ public class Intersection implements Updateable, CarContainer {
 
 
     // CONSTANTS
-    private double nSLightLength = 30;
-    private double eWLightLength = 30;
-    private final double speedLimit = 16;
-    private final int secondsPerCar = 5;
+    private double nSLightLength = 90;
+    private double eWLightLength = 90;
+    private final double speedLimit = 12;
+    private final int secondsPerCar = 10;
     public static final double length = 75; // length of intersection (m)
     public static final double roadLength = 200;
     public static final double roadWidth = 15;
@@ -61,7 +61,7 @@ public class Intersection implements Updateable, CarContainer {
 
         state = true;
         queues.get(0).add(new DummyCar(xPos, yPos + 1000)); // North in green
-        queues.get(1).add(new DummyCar(xPos - roadWidth, yPos)); // East in red
+        queues.get(1).add(new DummyCar(xPos, yPos)); // East in red
         queues.get(2).add(new DummyCar(xPos, yPos - 1000)); // South in green
         queues.get(3).add(new DummyCar(xPos - roadWidth, yPos)); // West in red
 
@@ -160,7 +160,7 @@ public class Intersection implements Updateable, CarContainer {
 
             // Updating Dummies
             queues.get(0).set(0, new DummyCar(xPos, yPos + 1000)); // North in green
-            queues.get(1).set(0, new DummyCar(xPos - roadWidth, yPos)); // East in red
+            queues.get(1).set(0, new DummyCar(xPos, yPos)); // East in red
             queues.get(2).set(0, new DummyCar(xPos, yPos - 1000)); // South in green
             queues.get(3).set(0, new DummyCar(xPos - roadWidth, yPos)); // West in red
 
@@ -213,15 +213,14 @@ public class Intersection implements Updateable, CarContainer {
                             }
                             break;
                         case 1: // East in queue
-                            if (car.getXPosition() < xPos - length +
-                                    roadWidth) {
+                            if (car.getXPosition() < xPos) {
                                 // Gets the road the car is newly on
                                 next = roads.get(7);
                                 removed = true;
                             }
                             break;
                         case 2: // South in queue
-                            if (car.getYPosition() < yPos + roadWidth) {
+                            if (car.getYPosition() < yPos) {
                                 next = roads.get(4);
                                 removed = true;
                             }
