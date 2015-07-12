@@ -141,7 +141,7 @@ public class Intersection implements Updateable, CarContainer {
      */
     private void updateRoadDummy() {
         boolean changed = false;
-        if (state == true && (Driver.getTimeElapsed() - lastLightStart) ==
+        if (state && (Driver.getTimeElapsed() - lastLightStart) ==
                 nSLightLength) { // NS light needs to change to red
 
             // Updating Dummies
@@ -155,7 +155,7 @@ public class Intersection implements Updateable, CarContainer {
             changed = true;
         }
 
-        if (state == false && (Driver.getTimeElapsed() - lastLightStart) ==
+        if (state && (Driver.getTimeElapsed() - lastLightStart) ==
                 eWLightLength) { // NS light needs to change to green
 
             // Updating Dummies
@@ -213,14 +213,16 @@ public class Intersection implements Updateable, CarContainer {
                             }
                             break;
                         case 1: // East in queue
-                            if (car.getXPosition() < xPos + roadWidth) {
+                            if (car.getXPosition() < xPos - length +
+                                    roadWidth) {
                                 // Gets the road the car is newly on
                                 next = roads.get(7);
                                 removed = true;
                             }
                             break;
                         case 2: // South in queue
-                            if (car.getYPosition() < yPos + roadWidth) {
+                            if (car.getYPosition() < yPos - length +
+                                    roadWidth) {
                                 next = roads.get(4);
                                 removed = true;
                             }
