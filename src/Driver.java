@@ -20,7 +20,7 @@ public class Driver {
     // CONSTANTS
     public static final double frameRate = .5; // seconds
 
-    public synchronized static void main(String[] args) {
+    public synchronized static void main(String[] args) throws InterruptedException {
         intersections = new CopyOnWriteArrayList<>();
 
         createIntersections(numIntersectionsPerSide);
@@ -36,10 +36,12 @@ public class Driver {
         simulatorWindow.pack();
         simulatorWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         simulatorWindow.setVisible(true);
+        long startTime = System.currentTimeMillis();
 
         while (timeElapsed < simulationTime) {
             intersections.forEach(Intersection::update);
             drawingPanel.repaint();
+            Thread.sleep(500 - ((System.currentTimeMillis() - startTime) % 500));
 
             if (timeElapsed % checkpointTimeStep == 0) {
                 clearConsole();
