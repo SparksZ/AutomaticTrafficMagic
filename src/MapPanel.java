@@ -137,18 +137,18 @@ public class MapPanel extends JPanel {
                     Car c = (Car)m;
                     if (c.getNS()) {
                         if (c.getDirection() > 0) {
-                            g2.fillOval(panelX(c.getXPosition() - vizRoadWidth) - 1, panelY(c.getYPosition()) - 1, 3, 3);
+                            g2.fillOval(panelX(c.getXPosition() - (3 * vizRoadWidth / 4)) - 1, panelY(c.getYPosition()) - 1, 3, 3);
                         }
                         else {
-                            g2.fillOval(panelX(c.getXPosition() + vizRoadWidth) - 1, panelY(c.getYPosition()) - 1, 3, 3);
+                            g2.fillOval(panelX(c.getXPosition() + (3 * vizRoadWidth / 4)) - 1, panelY(c.getYPosition()) - 1, 3, 3);
                         }
                     }
                     else {
                         if (c.getDirection() > 0) {
-                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() - vizRoadWidth) - 1, 3, 3);
+                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() - (3 * vizRoadWidth / 4)) - 1, 3, 3);
                         }
                         else {
-                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() + vizRoadWidth) - 1, 3, 3);
+                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() + (3 * vizRoadWidth / 4)) - 1, 3, 3);
                         }
                     }
                 }
@@ -165,18 +165,18 @@ public class MapPanel extends JPanel {
                     Car c = (Car)m;
                     if (c.getNS()) {
                         if (c.getDirection() > 0) {
-                            g2.fillOval(panelX(c.getXPosition() - vizRoadWidth) - 1, panelY(c.getYPosition()) - 1, 3, 3);
+                            g2.fillOval(panelX(c.getXPosition() - (3 * vizRoadWidth / 4)) - 1, panelY(c.getYPosition()) - 1, 3, 3);
                         }
                         else {
-                            g2.fillOval(panelX(c.getXPosition() + vizRoadWidth) - 1, panelY(c.getYPosition()) - 1, 3, 3);
+                            g2.fillOval(panelX(c.getXPosition() + (3 * vizRoadWidth / 4)) - 1, panelY(c.getYPosition()) - 1, 3, 3);
                         }
                     }
                     else {
                         if (c.getDirection() > 0) {
-                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() - vizRoadWidth) - 1, 3, 3);
+                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() - (3 * vizRoadWidth / 4)) - 1, 3, 3);
                         }
                         else {
-                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() + vizRoadWidth) - 1, 3, 3);
+                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() + (3 * vizRoadWidth / 4)) - 1, 3, 3);
                         }
                     }
                 }

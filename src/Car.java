@@ -101,7 +101,9 @@ public class Car implements Moveable {
 //        if (leadingCarGap() > 2000) {
 //            System.out.println("HERE!");
 //        }
-
+    	if(carID != 24){
+    		System.out.println(carID + " " + toString());
+    	}
         updateVelocity();
         updatePosition();
     }
@@ -110,7 +112,7 @@ public class Car implements Moveable {
      * Updates the Velocity from acceleration and frameRate
      */
     private void updateVelocity() {
-        velocity = velocity + dVdT() * Driver.frameRate;
+        velocity = Math.max(0, velocity + dVdT() * Driver.frameRate);
     }
 
     /**
@@ -304,5 +306,9 @@ public class Car implements Moveable {
 
     public boolean getNS() {
         return nS;
+    }
+    
+    public int getID(){
+    	return carID;
     }
 }
