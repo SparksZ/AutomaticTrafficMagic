@@ -42,10 +42,13 @@ public class MapPanel extends JPanel {
             Intersection i = intersections.get(index);
             // paint intersections, with corresponding light colors
             g2.setColor(redLightColor);
-                g2.fillRect(panelX(i.getX() - 75), panelY(i.getY() - vizRoadWidth),
-                        (int)(150*scalingFactorX), (int)(vizRoadWidth*2*scalingFactorY));
-                g2.fillRect(panelX(i.getX() - vizRoadWidth), panelY(i.getY() - 75),
-                        (int)(vizRoadWidth*2*scalingFactorX), (int)(150*scalingFactorY));
+            g2.fillRect(panelX(i.getX() - 75), panelY(i.getY() - vizRoadWidth),
+                    (int)(150*scalingFactorX), (int)(vizRoadWidth*2*scalingFactorY));
+            g2.fillRect(panelX(i.getX() - vizRoadWidth), panelY(i.getY() - 75),
+                    (int)(vizRoadWidth*2*scalingFactorX), (int)(150*scalingFactorY));
+            g2.setColor(Color.GRAY);
+            g2.fillRect(panelX(i.getX() - vizRoadWidth), panelY(i.getY() - vizRoadWidth),
+                    (int)(vizRoadWidth*2*scalingFactorX), (int)(vizRoadWidth*2*scalingFactorY));
             byte currLightState = i.getGreenDirection();
             g2.setColor(greenLightColor);
             if (currLightState == Intersection.NORTH) {
