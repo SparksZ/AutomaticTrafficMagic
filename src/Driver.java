@@ -17,8 +17,10 @@ public class Driver {
     private static int numIntersectionsPerSide = 3;
     private static int finalMapSize = (int)((numIntersectionsPerSide + 1)*(Intersection.length + Intersection.roadLength) + Intersection.length*(numIntersectionsPerSide - 1));
 
+    public static int carID;
     // CONSTANTS
     public static final double frameRate = .5; // seconds
+    public static final int paintRate = 1; // milliseconds
 
     public synchronized static void main(String[] args) throws InterruptedException {
         intersections = new CopyOnWriteArrayList<>();
@@ -28,6 +30,7 @@ public class Driver {
         simulationTime = 7200;
         int checkpointTimeStep = (int)(simulationTime/20);
 
+        carID = 0;
         timeElapsed = 0;
 
         JFrame simulatorWindow = new JFrame("Automatic Traffic Magic");
@@ -41,7 +44,7 @@ public class Driver {
         while (timeElapsed < simulationTime) {
             intersections.forEach(Intersection::update);
             drawingPanel.repaint();
-            Thread.sleep(500 - ((System.currentTimeMillis() - startTime) % 500));
+            Thread.sleep(paintRate - ((System.currentTimeMillis() - startTime) % paintRate));
 
             if (timeElapsed % checkpointTimeStep == 0) {
                 clearConsole();
@@ -78,26 +81,28 @@ public class Driver {
                 if (Arrays.asList(7, -1, 3, 6, 5, 4).contains(sinkScenario)) {
                     Intersection remote = intersections.get((i - 1) * y + j);
                     remote.setCarContainer(2, inter.getRoad(4));
+                    remote.setCarContainer(6, inter.getRoad(0));
                 }
 
                 // Connects all East Out roads that need East Intersection
-                if (Arrays.asList(0, 1, 7 , -1, 6 , 5).contains(sinkScenario)) {
+                /*if (Arrays.asList(0, 1, 7 , -1, 6 , 5).contains(sinkScenario)) {
                     Intersection remote = intersections.get(i * y + j + 1);
                     inter.setRoad(5, remote.getRoad(3));
                     //remote.setCarContainer(3, inter.getRoad(5));
-                }
+                }*/
 
                 // Connect all South Out roads that need South Intersection
-                if (Arrays.asList(0, 1, 2, 7, -1, 3).contains(sinkScenario)) {
+                /*if (Arrays.asList(0, 1, 2, 7, -1, 3).contains(sinkScenario)) {
                     Intersection remote = intersections.get((i + 1) * y + j);
                     inter.setRoad(6, remote.getRoad(0));
                     //inter.setCarContainer(6, remote.getRoad(0));
-                }
+                }*/
 
                 // Connects all West Out roads that need West Intersection
                 if (Arrays.asList(1, 2, -1, 3, 5, 4).contains(sinkScenario)) {
                     Intersection remote = intersections.get(i * y + j - 1);
                     remote.setCarContainer(1, inter.getRoad(7));
+                    remote.setCarContainer(5, inter.getRoad(3));
                 }
             }
         }
