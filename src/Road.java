@@ -1,5 +1,3 @@
-
-
 /**
  * @author Kendall Merritt
  */
@@ -14,6 +12,7 @@ public class Road implements Updateable {
     private double roadLength;
     private double xWestPos, yNorthPos, xEastPos, ySouthPos;
     private CarContainer carContainer; // sink/intersection at the end of the road
+    public final double roadStartX, roadEndX, roadStartY, roadEndY;
 
     /**
      * Constructs a new Road
@@ -43,9 +42,29 @@ public class Road implements Updateable {
         if (nS) {
             xEastPos = xWestPos;
             ySouthPos = yNorthPos + roadLength;
+            roadStartX = xEastPos;
+            roadEndX = xEastPos;
+            if (pF) {
+                roadStartY = yNorthPos;
+                roadEndY = ySouthPos;
+            }
+            else {
+                roadStartY = ySouthPos;
+                roadEndY = yNorthPos;
+            }
         } else { // East-West Road
             xEastPos = xWestPos + roadLength;
             ySouthPos = yNorthPos;
+            roadStartY = yNorthPos;
+            roadEndY = yNorthPos;
+            if (pF) {
+                roadStartX = xWestPos;
+                roadEndX = xEastPos;
+            }
+            else {
+                roadStartX = xEastPos;
+                roadEndX = xWestPos;
+            }
         }
     }
 
@@ -237,6 +256,27 @@ public class Road implements Updateable {
      */
     public double getYSouthPos() {
         return ySouthPos;
+    }
+
+    /**
+     * @return whether the road ends in a sink
+     */
+    public boolean getEndRoad() {
+        return endRoad;
+    }
+
+    /**
+     * @return whether the road runs north-south (true) or east-west (false)
+     */
+    public boolean getNS() {
+        return nS;
+    }
+
+    /**
+     * @return if the road travels in the "positive" direction (south or east)
+     */
+    public boolean getPF() {
+        return positiveFlow;
     }
 
     /**

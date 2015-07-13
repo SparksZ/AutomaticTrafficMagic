@@ -21,6 +21,7 @@ public class CarFactory implements Updateable {
             if (!road.isFull()) {
                 makeCar();
             }
+            Driver.carID++;
         }
     }
 
@@ -33,7 +34,7 @@ public class CarFactory implements Updateable {
         int dir = (carFacts.get(2) > 0) ? 1 : -1;
         Car car = new Car(carFacts.get(0), carFacts.get(1), newLC.getVelocity(),
                 road, newLC, road.isNS(), dir,
-                Driver.getTimeElapsed());
+                Driver.getTimeElapsed(), Driver.carID);
         road.addCar(car);
         carsMade++;
         //Visualization.cars.add(car);

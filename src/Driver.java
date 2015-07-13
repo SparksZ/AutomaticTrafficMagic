@@ -1,4 +1,5 @@
 
+import javax.swing.JFrame;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
@@ -18,29 +19,41 @@ public class Driver {
     private static CopyOnWriteArrayList<Double> results;
     private static double simulationTime;
     private static double avgSpeed;
+    private static int numIntersectionsPerSide = 3;
+    private static int finalMapSize = (int)((numIntersectionsPerSide + 1)*(Intersection.length + Intersection.roadLength) + Intersection.length*(numIntersectionsPerSide - 1));
 
+    public static int carID;
     // CONSTANTS
     public static final double frameRate = .5; // seconds
+    public static final int paintRate = 200; // milliseconds
 
-    public synchronized static void main(String[] args) {
+    public synchronized static void main(String[] args) throws InterruptedException {
         intersections = new CopyOnWriteArrayList<>();
 
-        createIntersections(3);
+        createIntersections(numIntersectionsPerSide);
         connectIntersections();
         simulationTime = 7200;
+        int checkpointTimeStep = (int)(simulationTime/20);
 
+        carID = 0;
         timeElapsed = 0;
+
+        JFrame simulatorWindow = new JFrame("Automatic Traffic Magic");
+        MapPanel drawingPanel = new MapPanel(finalMapSize, intersections);
+        simulatorWindow.add(drawingPanel);
+        simulatorWindow.pack();
+        simulatorWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        simulatorWindow.setVisible(true);
+        long startTime = System.currentTimeMillis();
 
         while (timeElapsed < simulationTime) {
             intersections.forEach(Intersection::update);
+            drawingPanel.repaint();
+            Thread.sleep(paintRate - ((System.currentTimeMillis() - startTime) % paintRate));
 
-//            if (timeElapsed % 360 == 0) {
-//                clearConsole();
-//                System.out.println(timeElapsed / simulationTime * 100 + "% \r");
-//            }
-
-            if (timeElapsed != 0 && timeElapsed % 85 == 0) {
-                System.out.println("Stop!");
+            if (timeElapsed % checkpointTimeStep == 0) {
+                clearConsole();
+                System.out.println(timeElapsed / simulationTime * 100 + "% \r");
             }
 
             timeElapsed += (frameRate);
@@ -61,7 +74,7 @@ public class Driver {
     }
 
     public static void connectIntersections() {
-        int y = (int) Math.sqrt(intersections.size());
+        int y = numIntersectionsPerSide;
 
         for (int i = 0; i < y; i++) { // Rows of intersections
             for (int j = 0; j < y; j++) { // Columns of intersections
@@ -82,6 +95,7 @@ public class Driver {
                 if (Arrays.asList(7, -1, 3, 6, 5, 4).contains(sinkScenario)) {
                     Intersection remote = intersections.get((i - 1) * y + j);
                     remote.setCarContainer(2, inter.getRoad(4));
+                    //remote.setCarContainer(6, inter.getRoad(0));
                 }
 
                 // Connects all East Out roads that need East Intersection
@@ -102,6 +116,7 @@ public class Driver {
                 if (Arrays.asList(1, 2, -1, 3, 5, 4).contains(sinkScenario)) {
                     Intersection remote = intersections.get(i * y + j - 1);
                     remote.setCarContainer(1, inter.getRoad(7));
+                    //remote.setCarContainer(5, inter.getRoad(3));
                 }
             }
         }
@@ -113,10 +128,9 @@ public class Driver {
         for (int i = 0; i < y; i++) { // Rows of intersections
             for (int j = 0; j < y; j++) { // Columns of intersections
                 int sinkScenario = getSinkScenario(y, i, j);
-
-                Intersection inter = new Intersection(1000 + totalLength *
-                        (j + 1), 1000 + totalLength * (i + 1), sinkScenario);
-
+                double xCoordinate = 1000 + totalLength * (j + 1) + Intersection.length*j;
+                double yCoordinate = 1000 + totalLength * (i + 1) + Intersection.length*i;
+                Intersection inter = new Intersection(xCoordinate, yCoordinate, sinkScenario, new byte[]{3, 0, 2, 1});
                 intersections.add(inter);
             }
         }
