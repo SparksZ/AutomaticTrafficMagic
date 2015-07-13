@@ -3,6 +3,10 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.io.BufferedWriter;
+import java.io.PrintWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Created by Zack on 7/4/2015.
@@ -13,6 +17,7 @@ public class Driver {
     private static double timeElapsed;
     private static CopyOnWriteArrayList<Double> results;
     private static double simulationTime;
+    private static double avgSpeed;
 
     // CONSTANTS
     public static final double frameRate = .5; // seconds
@@ -41,9 +46,18 @@ public class Driver {
             timeElapsed += (frameRate);
         }
 
+        avgSpeed = averageSpeed();
+
         System.out.println("The average speed of the cars was: " +
-                averageSpeed() + " m/s. averaging over " + results.get(2) +
+                avgSpeed + " m/s. averaging over " + results.get(2) +
                 " cars");
+
+        try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("output.txt", true)))) {
+            out.println(String.valueOf(avgSpeed));
+            System.out.println("Average speed written to file output.txt");
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void connectIntersections() {
