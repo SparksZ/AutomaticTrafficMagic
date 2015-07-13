@@ -39,6 +39,7 @@ public class Driver {
 
         while (timeElapsed < simulationTime) {
             intersections.forEach(Intersection::update);
+            drawingPanel.repaint();
 
             if (timeElapsed % checkpointTimeStep == 0) {
                 clearConsole();
