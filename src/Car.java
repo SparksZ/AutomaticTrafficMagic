@@ -146,8 +146,14 @@ public class Car implements Moveable {
 
         if (nS) {
             yPosition = yPosition + velocity * Driver.frameRate * direction;
+            if (Double.isInfinite(yPosition)) {
+                System.out.println("infinite position. tE:" + Visualization.timeElapsed);
+            }
         } else {
             xPosition = xPosition + velocity * Driver.frameRate * direction;
+            if (Double.isInfinite(xPosition)) {
+                System.out.println("infinite position");
+            }
         }
 
         if (leadingCarGap() < 2) {
