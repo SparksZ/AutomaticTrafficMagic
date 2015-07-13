@@ -20,8 +20,8 @@ public class Intersection implements Updateable, CarContainer {
 
 
     // CONSTANTS
-    private final double nSLightLength = 10;
-    private final double eWLightLength = 10;
+    private final double nSLightLength;
+    private final double eWLightLength;
     private final double speedLimit = 16;
     private final int secondsPerCar = 5;
     public static final double length = 75; // length of intersection (m)
@@ -45,10 +45,13 @@ public class Intersection implements Updateable, CarContainer {
      *                     6: Southwest Corner
      *                     7: West side of grid
      */
-    public Intersection(double x, double y, int sinkScenario) {
+    public Intersection(double x, double y, int sinkScenario,
+                        double nSlightLength, double eWLightLength) {
         xPos = x;
         yPos = y;
         this.sinkScenario = sinkScenario;
+        this.nSLightLength = nSlightLength;
+        this.eWLightLength = eWLightLength;
 
         setUpRoads();
 
