@@ -101,7 +101,7 @@ public class Car implements Moveable {
 //        if (leadingCarGap() > 2000) {
 //            System.out.println("HERE!");
 //        }
-    	if(carID != 24){
+    	if(carID == 96){
     		System.out.println(carID + " " + toString());
     	}
         updateVelocity();

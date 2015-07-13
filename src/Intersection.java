@@ -192,9 +192,9 @@ public class Intersection implements Updateable, CarContainer {
 
                     // Removes cars from the intersection when they reach the end
                     int route = car.route();
-                    //if(((Car)car).getID() == 2){
-                    //	System.out.println(route);
-                    //}
+                    if(((Car)car).getID() == 96){
+                    	System.out.println(route);
+                    }
                     switch (i) {
                         case 0: // North in queue
                             if (car.getYPosition() > yPos) {
