@@ -10,8 +10,12 @@ public class Intersection implements Updateable, CarContainer {
                                       road doesn't exist */
     private double northStart;
     private double northEnd;
-    private boolean state; // true if N/S is green, false if E/W is green
-	private double lastLightStart;
+    //private boolean state; // true if N/S is green, false if E/W is green
+    private byte currGreenLight; // 0 = north, 1 = east, 2 = south, 3 = west
+    public static final byte NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3;
+    private final byte[] lightList;
+    private int lightIndex = 0;
+    private double timeSinceStateChange = 0;
     private double xPos; // eastern most point of the intersection
     private double yPos; // southern most point of the intersection
     private CopyOnWriteArrayList<CarSink> sinks = new CopyOnWriteArrayList<>();
@@ -20,8 +24,7 @@ public class Intersection implements Updateable, CarContainer {
 
 
     // CONSTANTS
-    private final double nSLightLength = 10;
-    private final double eWLightLength = 10;
+    private final double timeBetweenStates = 400;
     private final double speedLimit = 16;
     private final int secondsPerCar = 5;
     public static final double length = 75; // length of intersection (m)
@@ -45,10 +48,11 @@ public class Intersection implements Updateable, CarContainer {
      *                     6: Southwest Corner
      *                     7: West side of grid
      */
-    public Intersection(double x, double y, int sinkScenario) {
+    public Intersection(double x, double y, int sinkScenario, byte[] lightList) {
         xPos = x;
         yPos = y;
         this.sinkScenario = sinkScenario;
+        this.lightList = lightList;
 
         setUpRoads();
 
@@ -57,15 +61,14 @@ public class Intersection implements Updateable, CarContainer {
         for (int i = 0; i < 4; i++) {
             queues.add(new CopyOnWriteArrayList<>());
         }
+        queues.get(0).add(new DummyCar(xPos, yPos));
+        queues.get(1).add(new DummyCar(xPos, yPos));
+        queues.get(2).add(new DummyCar(xPos, yPos));
+        queues.get(3).add(new DummyCar(xPos, yPos));
 
-        state = true;
-        queues.get(0).add(new DummyCar(xPos, yPos + 1000)); // North in green
-        queues.get(1).add(new DummyCar(xPos, yPos)); // East in red
-        queues.get(2).add(new DummyCar(xPos, yPos - 1000)); // South in green
-        queues.get(3).add(new DummyCar(xPos, yPos)); // West in red
-
-        lastLightStart = 0; // 0 is the start of the simulation
-
+        // set the initial green light
+        currGreenLight = lightList[0];
+        queues.get(currGreenLight).set(0, new DummyCar(100000,100000));
     }
 
     /**
@@ -140,32 +143,18 @@ public class Intersection implements Updateable, CarContainer {
      */
     private void updateRoadDummy() {
         boolean changed = false;
-        if (state == true && (Driver.getTimeElapsed() - lastLightStart) ==
-                nSLightLength) { // NS light needs to change to red
-
-            // Updating Dummies
-            queues.get(0).set(0, new DummyCar(xPos, yPos)); // North In
-            queues.get(1).set(0, new DummyCar(xPos - 1000, yPos)); // East In
-            queues.get(2).set(0, new DummyCar(xPos, yPos)); // South In
-            queues.get(3).set(0, new DummyCar(xPos + 1000, yPos)); // West In
-
-            state = false;
-            lastLightStart = Driver.getTimeElapsed();
-            changed = true;
-        }
-
-        if (state == false && (Driver.getTimeElapsed() - lastLightStart) ==
-                eWLightLength) { // NS light needs to change to green
-
-            // Updating Dummies
-            queues.get(0).set(0, new DummyCar(xPos, yPos + 1000)); // North in green
-            queues.get(1).set(0, new DummyCar(xPos, yPos)); // East in red
-            queues.get(2).set(0, new DummyCar(xPos, yPos - 1000)); // South in green
-            queues.get(3).set(0, new DummyCar(xPos, yPos)); // West in red
-
-            state = true;
-            lastLightStart = Driver.getTimeElapsed();
-            changed = true;
+        timeSinceStateChange += .5;
+        if (timeSinceStateChange >= timeBetweenStates) {
+            byte prevGreenLight = currGreenLight;
+            lightIndex++;
+            lightIndex %= lightList.length;
+            currGreenLight = lightList[lightIndex];
+            if (prevGreenLight != currGreenLight) {
+                queues.get(prevGreenLight).set(0, new DummyCar(xPos, yPos));
+                queues.get(currGreenLight).set(0, new DummyCar(100000,100000));
+                changed = true;
+            }
+            timeSinceStateChange = 0;
         }
 
         if (changed) {
@@ -336,8 +325,8 @@ public class Intersection implements Updateable, CarContainer {
 		return false;
 	}
 
-    public boolean getState() {
-        return state;
+    public byte getGreenDirection() {
+        return currGreenLight;
     }
 
     public double getLength() {
@@ -496,9 +485,16 @@ public class Intersection implements Updateable, CarContainer {
     }
 
     public String toString() {
-        String ns = (state) ? "Green" : "Red";
-        String ew = (state) ? "Red" : "Green";
-        return "N/S: " + ns + " E/W: " + ew;
+        String green;
+        switch (currGreenLight) {
+            case 0: green = "north"; break;
+            case 1: green = "east"; break;
+            case 2: green = "south"; break;
+            case 3: green = "west"; break;
+            default: green = "INVALID STATE";
+        }
+        // should include more about the state in a toString() method
+        return green;
     }
 
     /**

@@ -109,7 +109,7 @@ public class Driver {
                 int sinkScenario = getSinkScenario(y, i, j);
                 double xCoordinate = 1000 + totalLength * (j + 1) + Intersection.length*j;
                 double yCoordinate = 1000 + totalLength * (i + 1) + Intersection.length*i;
-                Intersection inter = new Intersection(xCoordinate, yCoordinate, sinkScenario);
+                Intersection inter = new Intersection(xCoordinate, yCoordinate, sinkScenario, new byte[]{3, 0, 2, 1});
                 intersections.add(inter);
             }
         }
