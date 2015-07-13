@@ -71,7 +71,7 @@ public class Car implements Moveable {
             aggressive = true;
             aggressiveFactor = 1.15;
         }
-        
+
         if (nS) {
         	if (direction > 0) {
         		north = true;
@@ -284,7 +284,7 @@ public class Car implements Moveable {
         return (that.getXPosition() == this.xPosition) && (that.getYPosition()
                 == this.yPosition);
     }
-    
+
     public int route() {
     	r.setSeed(SEED ^ (carID + intersectionNum));
     	if (r.nextBoolean()) {
@@ -296,5 +296,13 @@ public class Car implements Moveable {
     	} else {
     		return 0;
     	}
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public boolean getNS() {
+        return nS;
     }
 }

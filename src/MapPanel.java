@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Dimension;
 import java.util.List;
 import java.awt.RenderingHints;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MapPanel extends JPanel {
     private int sideLength;
@@ -15,6 +16,11 @@ public class MapPanel extends JPanel {
     private static int numIntersectionsPerSide;
     private static final int PADDING = 20; // not pixels, but proportional to pixels
     private static final int vizRoadWidth = 16;
+    private static final Color greenLightColor = new Color(0,150,0),
+            redLightColor = new Color(150, 0, 0),
+            streetColor = Color.GRAY,
+            roadCarColor = Color.BLACK,
+            intersectionCarColor = new Color(200, 200, 255);
 
     public MapPanel(int sideLength, List<Intersection> intersections) {
         numIntersectionsPerSide = (int)Math.round(Math.sqrt(intersections.size()));
@@ -37,24 +43,24 @@ public class MapPanel extends JPanel {
             boolean currLightState = i.getState();
             // paint intersections, with corresponding light colors
             if (currLightState) {
-                g2.setColor(Color.RED);
+                g2.setColor(redLightColor);
                 g2.fillRect(panelX(i.getX() - 75), panelY(i.getY() - vizRoadWidth),
                         (int)(150*scalingFactorX), (int)(vizRoadWidth*2*scalingFactorY));
-                g2.setColor(Color.GREEN);
+                g2.setColor(greenLightColor);
                 g2.fillRect(panelX(i.getX() - vizRoadWidth), panelY(i.getY() - 75),
                         (int)(vizRoadWidth*2*scalingFactorX), (int)(150*scalingFactorY));
             }
             else {
-                g2.setColor(Color.RED);
+                g2.setColor(redLightColor);
                 g2.fillRect(panelX(i.getX() - vizRoadWidth), panelY(i.getY() - 75),
                         (int)(vizRoadWidth*2*scalingFactorX), (int)(150*scalingFactorY));
-                g2.setColor(Color.GREEN);
+                g2.setColor(greenLightColor);
                 g2.fillRect(panelX(i.getX() - 75), panelY(i.getY() - vizRoadWidth),
                         (int)(150*scalingFactorX), (int)(vizRoadWidth*2*scalingFactorY));
             }
 
             List<Road> interRoads = i.getRoads();
-            g2.setColor(Color.GRAY);
+            g2.setColor(streetColor);
             Road currRoad;
             // southbound roads are on the left, eastbound roads are on top
             // north-south inbound top
@@ -92,8 +98,7 @@ public class MapPanel extends JPanel {
 
             // paint sinks
             g2.setColor(Color.BLACK);
-            for (int rNum = 0; rNum < interRoads.size(); rNum++) { // iterate over incoming roads
-                Road r = interRoads.get(rNum);
+            for (Road r : interRoads) {
                 if (r.getEndRoad()) {
                     if (r.getNS()) {
                         if (r.getPF()) {
@@ -116,8 +121,57 @@ public class MapPanel extends JPanel {
                         }
                     }
                 }
-                for (Moveable c : interRoads.get(rNum).getCars()) {
-                    //stuff;
+            }
+
+            // paint cars on roads
+            g2.setColor(roadCarColor);
+            for (Road r : interRoads) {
+                for (Moveable m : r.getCars()) {
+                    Car c = (Car)m;
+                    if (c.getNS()) {
+                        if (c.getDirection() > 0) {
+                            g2.fillOval(panelX(c.getXPosition() - vizRoadWidth) - 1, panelY(c.getYPosition()) - 1, 3, 3);
+                        }
+                        else {
+                            g2.fillOval(panelX(c.getXPosition() + vizRoadWidth) - 1, panelY(c.getYPosition()) - 1, 3, 3);
+                        }
+                    }
+                    else {
+                        if (c.getDirection() > 0) {
+                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() - vizRoadWidth) - 1, 3, 3);
+                        }
+                        else {
+                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() + vizRoadWidth) - 1, 3, 3);
+                        }
+                    }
+                }
+            }
+
+            // paint cars in intersection queues
+            g2.setColor(intersectionCarColor);
+            CopyOnWriteArrayList<CopyOnWriteArrayList<Moveable>> interQueues = i.getQueues();
+            for (CopyOnWriteArrayList<Moveable> queue : interQueues) {
+                for (Moveable m : queue) {
+                    if (!(m instanceof Car)) {
+                        continue;
+                    }
+                    Car c = (Car)m;
+                    if (c.getNS()) {
+                        if (c.getDirection() > 0) {
+                            g2.fillOval(panelX(c.getXPosition() - vizRoadWidth) - 1, panelY(c.getYPosition()) - 1, 3, 3);
+                        }
+                        else {
+                            g2.fillOval(panelX(c.getXPosition() + vizRoadWidth) - 1, panelY(c.getYPosition()) - 1, 3, 3);
+                        }
+                    }
+                    else {
+                        if (c.getDirection() > 0) {
+                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() - vizRoadWidth) - 1, 3, 3);
+                        }
+                        else {
+                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() + vizRoadWidth) - 1, 3, 3);
+                        }
+                    }
                 }
             }
 

@@ -537,4 +537,8 @@ public class Intersection implements Updateable, CarContainer {
     public CopyOnWriteArrayList<Road> getRoads() {
         return roads;
     }
+
+    public CopyOnWriteArrayList<CopyOnWriteArrayList<Moveable>> getQueues() {
+        return queues;
+    }
 }
