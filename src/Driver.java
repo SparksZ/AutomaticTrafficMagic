@@ -15,7 +15,7 @@ public class Driver {
     private static CopyOnWriteArrayList<Double> results;
     private static double simulationTime;
     private static int numIntersectionsPerSide = 3;
-    private static int finalMapSize = (int)((numIntersectionsPerSide + 1)*(Intersection.length + Intersection.roadLength));
+    private static int finalMapSize = (int)((numIntersectionsPerSide + 1)*(Intersection.length + Intersection.roadLength) + Intersection.length*(numIntersectionsPerSide - 1));
 
     // CONSTANTS
     public static final double frameRate = .5; // seconds
@@ -107,10 +107,9 @@ public class Driver {
         for (int i = 0; i < y; i++) { // Rows of intersections
             for (int j = 0; j < y; j++) { // Columns of intersections
                 int sinkScenario = getSinkScenario(y, i, j);
-
-                Intersection inter = new Intersection(1000 + totalLength *
-                        (j + 1), 1000 + totalLength * (i + 1), sinkScenario);
-
+                double xCoordinate = 1000 + totalLength * (j + 1) + Intersection.length*j;
+                double yCoordinate = 1000 + totalLength * (i + 1) + Intersection.length*i;
+                Intersection inter = new Intersection(xCoordinate, yCoordinate, sinkScenario);
                 intersections.add(inter);
             }
         }
