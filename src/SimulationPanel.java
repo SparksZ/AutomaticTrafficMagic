@@ -61,7 +61,7 @@ public class SimulationPanel extends JPanel implements ActionListener {
         }
     }
 
-    class SimulationTask extends SwingWorker<Void, Integer> {
+    class SimulationTask extends SwingWorker<Double, Integer> {
         Simulation mySim;
         MapPanel map;
         SimulationTask(Simulation sim, MapPanel map) {
@@ -69,13 +69,13 @@ public class SimulationPanel extends JPanel implements ActionListener {
             this.map = map;
         }
         @Override
-        public Void doInBackground() {
+        public Double doInBackground() {
             int iterationsSincePaint = 0;
             while (sim.getTimeElapsed() < sim.getSimulationTime()) {
                 if (isCancelled) {
                     buttonsAndSuch.progressBar.setValue(0);
                     buttonsAndSuch.statusLabel.setText("Status: Cancelled");
-                    return null;
+                    return Double.NaN;
                 }
                 mySim.updateSim();
                 iterationsSincePaint++;
@@ -87,7 +87,7 @@ public class SimulationPanel extends JPanel implements ActionListener {
                 }
             }
             buttonsAndSuch.statusLabel.setText("Status: Done");
-            return null;
+            return mySim.averageSpeed();
         }
 
         public void done() {

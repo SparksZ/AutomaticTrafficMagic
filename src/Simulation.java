@@ -1,7 +1,7 @@
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Arrays;
 
-public class Simulation {
+public class Simulation implements Runnable {
 
     private CopyOnWriteArrayList<Intersection> intersections;
     private CopyOnWriteArrayList<Double> results;
@@ -10,11 +10,13 @@ public class Simulation {
     private int timeElapsed = 0;
     private final double simulationTime;
     private final double TIME_STEP = 1;
+    private byte[][] lightTimingData;
 
 
     public Simulation (int numIntersectionsPerSide, int simulationLength, byte[][] lightTimingData) {
         this.numIntersectionsPerSide = numIntersectionsPerSide;
         this.simulationTime = simulationLength;
+        this.lightTimingData = lightTimingData;
 
         // init variables
         intersections = new CopyOnWriteArrayList<Intersection>();
@@ -25,8 +27,7 @@ public class Simulation {
         connectIntersections();
     }
 
-    // TODO: change from void to something meaningful
-    public void runSim() {
+    public double runSim() {
         while (timeElapsed < simulationTime) {
             updateSim();
             // int checkpointTimeStep = (int)(simulationTime/20);
@@ -34,9 +35,24 @@ public class Simulation {
             //     System.out.println(timeElapsed / simulationTime * 100 + "% \r");
             // }
         }
-        System.out.println("The average speed of the cars was: " +
-                averageSpeed() + " m/s. averaging over " + results.get(2) +
-                " cars");
+        return averageSpeed();
+        //System.out.println("The average speed of the cars was: " +
+        //        averageSpeed() + " m/s. averaging over " + results.get(2) + " cars");
+    }
+
+    public void run() {
+        StringBuilder sb = new StringBuilder(2 + numIntersectionsPerSide*numIntersectionsPerSide*lightTimingData[0].length);
+        sb.append("[");
+        for (byte[] intersectionNums : lightTimingData) {
+            for (byte greenLight : intersectionNums) {
+                sb.append(greenLight);
+            }
+        }
+        sb.append("]");
+        System.out.println(Thread.currentThread().getName() + " Start.");
+        System.out.println("Input vector: " + sb.toString());
+        double averageSpeed = runSim();
+        System.out.println(Thread.currentThread().getName() + " End. avgSpeed = " + averageSpeed);
     }
 
     public void updateSim() {
@@ -161,7 +177,7 @@ public class Simulation {
         return sinkScenario;
     }
 
-    private double averageSpeed() {
+    public double averageSpeed() {
         results = new CopyOnWriteArrayList<Double>();
         for (int i = 0; i < 3; i++) {
             results.add(0.0);
