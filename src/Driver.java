@@ -128,8 +128,9 @@ public class Driver {
 
                 double xCoordinate = 1000 + totalLength * (j + 1) + Intersection.length*j;
                 double yCoordinate = 1000 + totalLength * (i + 1) + Intersection.length*i;
+
                 Intersection inter = new Intersection(xCoordinate, yCoordinate,
-                        sinkScenario, nSLight, eWLight);
+                        sinkScenario, nSLight, eWLight, new byte[]{3, 0, 2, 1});
                 intersections.add(inter);
             }
         }

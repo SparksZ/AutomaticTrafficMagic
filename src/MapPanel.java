@@ -40,24 +40,34 @@ public class MapPanel extends JPanel {
         scalingFactorY = (double)getHeight()/(2*PADDING + sideLength);
         for (int index = 0; index < intersections.size(); index++) {
             Intersection i = intersections.get(index);
-            boolean currLightState = i.getState();
             // paint intersections, with corresponding light colors
-            if (currLightState) {
-                g2.setColor(redLightColor);
-                g2.fillRect(panelX(i.getX() - 75), panelY(i.getY() - vizRoadWidth),
-                        (int)(150*scalingFactorX), (int)(vizRoadWidth*2*scalingFactorY));
-                g2.setColor(greenLightColor);
+            g2.setColor(redLightColor);
+            g2.fillRect(panelX(i.getX() - 75), panelY(i.getY() - vizRoadWidth),
+                    (int)(150*scalingFactorX), (int)(vizRoadWidth*2*scalingFactorY));
+            g2.fillRect(panelX(i.getX() - vizRoadWidth), panelY(i.getY() - 75),
+                    (int)(vizRoadWidth*2*scalingFactorX), (int)(150*scalingFactorY));
+            g2.setColor(Color.GRAY);
+            g2.fillRect(panelX(i.getX() - vizRoadWidth), panelY(i.getY() - vizRoadWidth),
+                    (int)(vizRoadWidth*2*scalingFactorX), (int)(vizRoadWidth*2*scalingFactorY));
+            byte currLightState = i.getGreenDirection();
+            g2.setColor(greenLightColor);
+            if (currLightState == Intersection.NORTH) {
                 g2.fillRect(panelX(i.getX() - vizRoadWidth), panelY(i.getY() - 75),
-                        (int)(vizRoadWidth*2*scalingFactorX), (int)(150*scalingFactorY));
+                        (int)(vizRoadWidth*2*scalingFactorX), (int)((75 - vizRoadWidth)*scalingFactorY));
             }
-            else {
-                g2.setColor(redLightColor);
-                g2.fillRect(panelX(i.getX() - vizRoadWidth), panelY(i.getY() - 75),
-                        (int)(vizRoadWidth*2*scalingFactorX), (int)(150*scalingFactorY));
-                g2.setColor(greenLightColor);
+            else if (currLightState == Intersection.EAST) {
+                g2.fillRect(panelX(i.getX() + vizRoadWidth), panelY(i.getY() - vizRoadWidth),
+                        (int)((75 - vizRoadWidth)*scalingFactorX), (int)(vizRoadWidth*2*scalingFactorY));
+            }
+            else if (currLightState == Intersection.SOUTH) {
+                g2.fillRect(panelX(i.getX() - vizRoadWidth), panelY(i.getY() + vizRoadWidth),
+                        (int)(vizRoadWidth*2*scalingFactorX), (int)((75 - vizRoadWidth)*scalingFactorY));
+            }
+            else if (currLightState == Intersection.WEST) {
                 g2.fillRect(panelX(i.getX() - 75), panelY(i.getY() - vizRoadWidth),
-                        (int)(150*scalingFactorX), (int)(vizRoadWidth*2*scalingFactorY));
+                        (int)((75 - vizRoadWidth)*scalingFactorX), (int)(vizRoadWidth*2*scalingFactorY));
             }
+
 
             List<Road> interRoads = i.getRoads();
             g2.setColor(streetColor);
