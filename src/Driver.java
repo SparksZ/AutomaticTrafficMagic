@@ -1,9 +1,13 @@
 
 import javax.swing.JFrame;
+import java.text.DecimalFormat;
+import java.text.Format;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.io.BufferedWriter;
+import java.io.PrintWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Created by Zack on 7/4/2015.
@@ -22,6 +26,8 @@ public class Driver {
     public static final double frameRate = .5; // seconds
     public static final int paintRate = 10; // milliseconds
 
+    public static double[][] lightTimes = new double[numIntersectionsPerSide * numIntersectionsPerSide][2];
+
     public synchronized static void main(String[] args) throws InterruptedException {
         intersections = new CopyOnWriteArrayList<>();
 
@@ -33,21 +39,20 @@ public class Driver {
         carID = 0;
         timeElapsed = 0;
 
-        JFrame simulatorWindow = new JFrame("Automatic Traffic Magic");
-        MapPanel drawingPanel = new MapPanel(finalMapSize, intersections);
-        simulatorWindow.add(drawingPanel);
-        simulatorWindow.pack();
-        simulatorWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        simulatorWindow.setVisible(true);
+//        JFrame simulatorWindow = new JFrame("Automatic Traffic Magic");
+//        MapPanel drawingPanel = new MapPanel(finalMapSize, intersections);
+//        simulatorWindow.add(drawingPanel);
+//        simulatorWindow.pack();
+//        simulatorWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       // simulatorWindow.setVisible(true);
         long startTime = System.currentTimeMillis();
 
         while (timeElapsed < simulationTime) {
             intersections.forEach(Intersection::update);
-            drawingPanel.repaint();
-            Thread.sleep(paintRate - ((System.currentTimeMillis() - startTime) % paintRate));
+           //drawingPanel.repaint();
+            //Thread.sleep(paintRate - ((System.currentTimeMillis() - startTime) % paintRate));
 
             if (timeElapsed % checkpointTimeStep == 0) {
-                clearConsole();
                 System.out.println(timeElapsed / simulationTime * 100 + "% \r");
             }
 
@@ -57,6 +62,25 @@ public class Driver {
         System.out.println("The average speed of the cars was: " +
                 averageSpeed() + " m/s. averaging over " + results.get(2) +
                 " cars");
+
+        // Outputs to file
+        try(PrintWriter out = new PrintWriter(new BufferedWriter(
+                new FileWriter("output.txt", true)))) {
+            DecimalFormat f = new DecimalFormat("#0.00");
+            out.println("\n" + f.format(averageSpeed()) + " m/s");
+
+            out.println();
+            out.printf("%5s %5s%n", "N/S", "E/W");
+
+            for (int i = 0; i < Math.pow(numIntersectionsPerSide, 2); i++) {
+                out.printf("%5.0f %5.0f%n", lightTimes[i][0], lightTimes[i][1]);
+            }
+
+            System.out.println("Average speed written to file output.txt");
+            out.close();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void connectIntersections() {
@@ -125,6 +149,9 @@ public class Driver {
 
                 double eWLight = Math.floor(minLightTime + (maxLightTime -
                         minLightTime) * r.nextDouble());
+
+                lightTimes[i * y + j][0] = nSLight;
+                lightTimes[i * y + j][1] = eWLight;
 
                 double xCoordinate = 1000 + totalLength * (j + 1) + Intersection.length*j;
                 double yCoordinate = 1000 + totalLength * (i + 1) + Intersection.length*i;
