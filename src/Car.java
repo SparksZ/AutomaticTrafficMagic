@@ -102,7 +102,7 @@ public class Car implements Moveable {
      * Updates the Velocity from acceleration and frameRate
      */
     private void updateVelocity() {
-        velocity = velocity + dVdT() * Driver.frameRate;
+        velocity = Math.max(0, velocity + dVdT() * Driver.frameRate);
     }
 
     /**

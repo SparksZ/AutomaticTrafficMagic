@@ -263,11 +263,11 @@ public class Road implements Updateable {
 
             if (positiveFlow) { // travelling east
                 result.add(xWestPos);
-                result.add(yNorthPos + roadWidth);
+                result.add(yNorthPos);
                 result.add(1.0);
             } else { // travelling west
                 result.add(xEastPos);
-                result.add(yNorthPos);
+                result.add(yNorthPos - roadWidth);
                 result.add(-1.0);
             }
         }

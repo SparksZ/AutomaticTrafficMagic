@@ -8,6 +8,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -67,7 +68,7 @@ public class Visualization extends Application {
     private void loadgame() {
         intersections = new CopyOnWriteArrayList<>();
 
-        createIntersections(3);
+        createIntersections(5, 1);
         connectIntersections();
         simulationTime = 7200;
         cars = new CopyOnWriteArrayList<>();
@@ -122,16 +123,29 @@ public class Visualization extends Application {
         }
     }
 
-    public static void createIntersections(int y) {
+    public static void createIntersections(int y, int seed) {
         double totalLength = Intersection.length + Intersection.roadLength;
+
+        Random r = new Random(seed);
+
+        double minLightTime = 20;
+        double maxLightTime = 120;
 
         for (int i = 0; i < y; i++) { // Rows of intersections
             for (int j = 0; j < y; j++) { // Columns of intersections
                 int sinkScenario = getSinkScenario(y, i, j);
 
-                Intersection inter = new Intersection(1000 + totalLength *
-                        (j + 1), 1000 + totalLength * (i + 1), sinkScenario);
+                double nSLight = Math.floor(minLightTime + (maxLightTime -
+                        minLightTime) * r.nextDouble());
 
+                double eWLight = Math.floor(minLightTime + (maxLightTime -
+                        minLightTime) * r.nextDouble());
+
+                double xCoordinate = 1000 + totalLength * (j + 1) + Intersection.length*j;
+                double yCoordinate = 1000 + totalLength * (i + 1) + Intersection.length*i;
+
+                Intersection inter = new Intersection(xCoordinate, yCoordinate,
+                        sinkScenario, nSLight, eWLight);
                 intersections.add(inter);
             }
         }
