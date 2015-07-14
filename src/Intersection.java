@@ -286,12 +286,7 @@ public class Intersection implements Updateable, CarContainer {
                             }
                             break;
                         case 1: // East in queue
-<<<<<<< HEAD
-                            if (car.getXPosition() < xPos - length +
-                                    roadWidth) {
-=======
                             if (car.getXPosition() < xPos) {
->>>>>>> Viz
                                 // Gets the road the car is newly on
                                 if (route == 0) {
                             		next = roads.get(7);
@@ -304,11 +299,6 @@ public class Intersection implements Updateable, CarContainer {
                             }
                             break;
                         case 2: // South in queue
-<<<<<<< HEAD
-                            if (car.getYPosition() < yPos - length +
-                                    roadWidth) {
-                                next = roads.get(4);
-=======
                             if (car.getYPosition() < yPos) {
                                 if (route == 0) {
                             		next = roads.get(4);
@@ -317,7 +307,6 @@ public class Intersection implements Updateable, CarContainer {
                             	} else {
                             		next = roads.get(7);
                             	}
->>>>>>> Viz
                                 removed = true;
                             }
                             break;
