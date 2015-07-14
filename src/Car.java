@@ -97,12 +97,12 @@ public class Car implements Moveable {
      * Updates the cars velocity and position based on the frameRate and
      * acceleration/velocity (respectively)
      */
-    public void update() {
+    public void update(int timeElapsed) {
 //        if (leadingCarGap() > 2000) {
 //            System.out.println("HERE!");
 //        }
     	if(carID == 96){
-    		System.out.println(carID + " " + toString());
+    		// System.out.println(carID + " " + toString());
     	}
         updateVelocity();
         updatePosition();
@@ -307,7 +307,7 @@ public class Car implements Moveable {
     public boolean getNS() {
         return nS;
     }
-    
+
     public int getID(){
     	return carID;
     }

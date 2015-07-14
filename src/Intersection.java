@@ -10,7 +10,7 @@ public class Intersection implements Updateable, CarContainer {
                                       road doesn't exist */
     private double northStart;
     private double northEnd;
-    //private boolean state; // true if N/S is green, false if E/W is green
+    private int timeElapsed;
     private byte currGreenLight; // 0 = north, 1 = east, 2 = south, 3 = west
     public static final byte NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3;
     private final byte[] lightList;
@@ -24,8 +24,6 @@ public class Intersection implements Updateable, CarContainer {
 
 
     // CONSTANTS
-    private final double nSLightLength;
-    private final double eWLightLength;
     private final double timeBetweenStates = 400;
     private final double speedLimit = 16;
     private final int secondsPerCar = 5;
@@ -50,21 +48,18 @@ public class Intersection implements Updateable, CarContainer {
      *                     6: Southwest Corner
      *                     7: West side of grid
      */
-    public Intersection(double x, double y, int sinkScenario,
-        double nSlightLength, double eWLightLength, byte[] lightList) {
+    public Intersection(double x, double y, int sinkScenario, byte[] lightList) {
         xPos = x;
         yPos = y;
         this.sinkScenario = sinkScenario;
         this.lightList = lightList;
-        this.nSLightLength = nSlightLength;
-        this.eWLightLength = eWLightLength;
 
         setUpRoads();
 
         // Construct Queues of cars. Place dummy cars (Lights)
         queues = new CopyOnWriteArrayList<>();
         for (int i = 0; i < 4; i++) {
-            queues.add(new CopyOnWriteArrayList<>());
+            queues.add(new CopyOnWriteArrayList<Moveable>());
         }
         queues.get(0).add(new DummyCar(xPos, yPos));
         queues.get(1).add(new DummyCar(xPos, yPos));
@@ -91,21 +86,24 @@ public class Intersection implements Updateable, CarContainer {
     /**
      * Updates all the lights and car positions that are in the queues
      */
-    public void update() {
+    public void update(int timeElapsed) {
+        this.timeElapsed = timeElapsed;
 
         // Changes the lights if necessary
         updateRoadDummy();
-        advanceCarsInQueue();
-        updateRoads();
-        updateFactories();
+        advanceCarsInQueue(timeElapsed);
+        updateRoads(timeElapsed);
+        updateFactories(timeElapsed);
     }
 
     /**
      * Updates the factories if applicable
      */
-    private void updateFactories() {
+    private void updateFactories(int timeElapsed) {
         if (!factories.isEmpty()) {
-            factories.forEach(CarFactory::update);
+           for (CarFactory f : factories) {
+               f.update(timeElapsed);
+           }
         }
     }
 
@@ -113,10 +111,10 @@ public class Intersection implements Updateable, CarContainer {
      * Updates all out roads going to other intersections and roads that are
      * connected to factories/sinks
      */
-    private void updateRoads() {
+    private void updateRoads(int timeElapsed) {
         // Update all out roads
         for (int i = 4; i < 8; i++) {
-            roads.get(i).update();
+            roads.get(i).update(timeElapsed);
         }
 
         /* ************************************************
@@ -124,22 +122,22 @@ public class Intersection implements Updateable, CarContainer {
          ************************************************ */
         // North Intersections connected to factories
         if (Arrays.asList(0, 1, 2).contains(sinkScenario)) {
-            roads.get(0).update();
+            roads.get(0).update(timeElapsed);
         }
 
         // East roads connected to factories
         if (Arrays.asList(2, 3, 4).contains(sinkScenario)) {
-            roads.get(1).update();
+            roads.get(1).update(timeElapsed);
         }
 
         // South roads connected to factories
         if (Arrays.asList(4, 5, 6).contains(sinkScenario)) {
-            roads.get(2).update();
+            roads.get(2).update(timeElapsed);
         }
 
         // West roads connected to factories
         if (Arrays.asList(6, 7, 0).contains(sinkScenario)) {
-            roads.get(3).update();
+            roads.get(3).update(timeElapsed);
         }
     }
 
@@ -183,23 +181,25 @@ public class Intersection implements Updateable, CarContainer {
         }
     }
 
-    private void advanceCarsInQueue() {
+    private void advanceCarsInQueue(int timeElapsed) {
         // Advances Cars in Queues
         for (int i = 0; i < 4; i++) { // loops through queues
             CopyOnWriteArrayList<Moveable> q = queues.get(i);
             if (q.size() > 1) {
                 for (int j = 1; j < q.size(); j++) { // loops through cars in queue
                     Moveable car = q.get(j);
-                    car.update();
+                    car.update(timeElapsed);
 
                     Road next = roads.get(i); // ugly instantiation...
                     boolean removed = false;
 
                     // Removes cars from the intersection when they reach the end
                     int route = car.route();
+                    /*
                     if(((Car)car).getID() == 96){
                     	System.out.println(route);
                     }
+                    */
                     switch (i) {
                         case 0: // North in queue
                             if (car.getYPosition() > yPos) {

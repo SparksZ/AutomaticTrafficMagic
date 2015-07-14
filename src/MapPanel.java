@@ -2,18 +2,18 @@ import java.awt.Color;
 import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Dimension;
 import java.util.List;
 import java.awt.RenderingHints;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MapPanel extends JPanel {
     private int sideLength;
-    private int panelSideLength = 500;
     private double scalingFactorX, scalingFactorY;
     private List<Intersection> intersections;
+    private Simulation sim;
+
+    // constants
     private static final int INTERSECTION_OVAL_DIAM = 5;
-    private static int numIntersectionsPerSide;
     private static final int PADDING = 20; // not pixels, but proportional to pixels
     private static final int vizRoadWidth = 16;
     private static final Color greenLightColor = new Color(0,150,0),
@@ -22,12 +22,11 @@ public class MapPanel extends JPanel {
             roadCarColor = Color.BLACK,
             intersectionCarColor = new Color(200, 200, 255);
 
-    public MapPanel(int sideLength, List<Intersection> intersections) {
-        numIntersectionsPerSide = (int)Math.round(Math.sqrt(intersections.size()));
+    public MapPanel(Simulation sim, int preferred_panel_length, int sideLength) {
         this.sideLength = sideLength;
-        this.numIntersectionsPerSide = numIntersectionsPerSide;
-        this.intersections = intersections;
-        setPreferredSize(new Dimension(panelSideLength, panelSideLength));
+        this.intersections = sim.getIntersections();
+        this.sim = sim;
+        setPreferredSize(new java.awt.Dimension(preferred_panel_length, preferred_panel_length));
     }
 
     public void paint(Graphics g) {
@@ -197,7 +196,7 @@ public class MapPanel extends JPanel {
             }
             if (i.getSinkScenario() != 0 && i.getSinkScenario() != 1 && i.getSinkScenario() != 2) {
                 // paint roads to the north
-                Intersection otherIntersection = intersections.get(index - numIntersectionsPerSide);
+                Intersection otherIntersection = intersections.get(index - sim.getNumIntersectionsPerSide());
                 g2.drawLine(panelX(i.getX() - vizRoadWidth/2), panelY(i.getY() - 75),
                         panelX(otherIntersection.getX() - vizRoadWidth/2), panelY(otherIntersection.getY() + 75));
                 g2.drawLine(panelX(i.getX() + vizRoadWidth/2), panelY(i.getY() - 75),

@@ -72,11 +72,11 @@ public class Road implements Updateable {
      * Updates the positions of the cars on the road. If they get to the end,
      * they are added to the appropriate queue of the intersection at the end.
      */
-    public void update() {
+    public void update(int timeElapsed) {
 
         if (!cars.isEmpty()) {
             for (Moveable car : cars) {
-                car.update();
+                car.update(timeElapsed);
                 boolean wasRemoved = false; // Flag to set if was removed or not
 
                 if (nS) {
@@ -111,7 +111,7 @@ public class Road implements Updateable {
 
                 if (wasRemoved && carContainer instanceof CarSink) {
                     Car c = (Car) car;
-                    c.setEndTime(Driver.getTimeElapsed());
+                    c.setEndTime(timeElapsed);
                 }
             }
         }

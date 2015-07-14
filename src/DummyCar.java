@@ -37,8 +37,7 @@ public class DummyCar implements Moveable {
     }
 
     @Override
-    public void update() {
-
+    public void update(int timeElapsed) {
     }
 
     @Override
@@ -59,7 +58,7 @@ public class DummyCar implements Moveable {
     public String toString() {
         return "P: (" + xPosition + ", " + yPosition + ")";
     }
-    
+
     public int route(){
     	return 0;
     }

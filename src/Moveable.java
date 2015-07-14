@@ -8,7 +8,7 @@ public interface Moveable extends Updateable {
     double getYPosition();
     double getVelocity();
     String toString();
-    void update();
+    void update(int time);
     double getLength();
     void setLeadingCar(Moveable leadingCar);
     void setRoad(Road r);
