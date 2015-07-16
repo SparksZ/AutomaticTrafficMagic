@@ -29,7 +29,7 @@ public class Road implements Updateable {
                 double xWestPos, double yNorthPos, boolean nS, boolean pF,
                 boolean endRoad) {
         this.speedLimit = speedLimit;
-        cars = new CopyOnWriteArrayList<>();
+        cars = new CopyOnWriteArrayList<Moveable>();
         this.roadLength = roadLength;
         carContainer = i;
         this.xWestPos = xWestPos;
@@ -284,7 +284,7 @@ public class Road implements Updateable {
      * @return the (X, Y, direction) to start the car
      */
     public CopyOnWriteArrayList<Double> getStartState() {
-        CopyOnWriteArrayList<Double> result = new CopyOnWriteArrayList<>();
+        CopyOnWriteArrayList<Double> result = new CopyOnWriteArrayList<Double>();
 
         if (nS) {
             result.add(xEastPos);

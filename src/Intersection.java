@@ -18,9 +18,9 @@ public class Intersection implements Updateable, CarContainer {
     private double timeSinceStateChange = 0;
     private double xPos; // eastern most point of the intersection
     private double yPos; // southern most point of the intersection
-    private CopyOnWriteArrayList<CarSink> sinks = new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<CarSink> sinks = new CopyOnWriteArrayList<CarSink>();
     private CopyOnWriteArrayList<CarFactory> factories =
-            new CopyOnWriteArrayList<>();
+            new CopyOnWriteArrayList<CarFactory>();
 
 
     // CONSTANTS
@@ -57,7 +57,7 @@ public class Intersection implements Updateable, CarContainer {
         setUpRoads();
 
         // Construct Queues of cars. Place dummy cars (Lights)
-        queues = new CopyOnWriteArrayList<>();
+        queues = new CopyOnWriteArrayList<CopyOnWriteArrayList<Moveable>>();
         for (int i = 0; i < 4; i++) {
             queues.add(new CopyOnWriteArrayList<Moveable>());
         }
@@ -380,7 +380,7 @@ public class Intersection implements Updateable, CarContainer {
     private void setUpRoads() {
         /* Create North and West Roads (Driver will connect others after all
            instantiated) unless factory or sink */
-        roads = new CopyOnWriteArrayList<>();
+        roads = new CopyOnWriteArrayList<Road>();
 
         for (int i = 0; i < 8; i++) {
             roads.add(null);
@@ -508,7 +508,7 @@ public class Intersection implements Updateable, CarContainer {
      * @return a vector of (Total Distance, Total Time, # of cars)
      */
     public CopyOnWriteArrayList<Double> getSinkData() {
-        CopyOnWriteArrayList<Double> result = new CopyOnWriteArrayList<>();
+        CopyOnWriteArrayList<Double> result = new CopyOnWriteArrayList<Double>();
         for (int i = 0; i < 3; i++) {
             result.add(0.0);
         }

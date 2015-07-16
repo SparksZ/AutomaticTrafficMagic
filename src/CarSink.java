@@ -13,7 +13,7 @@ public class CarSink implements CarContainer {
      * @param road the road that the sink is at the end of
      */
     public CarSink(Road road) {
-        cars = new CopyOnWriteArrayList<>();
+        cars = new CopyOnWriteArrayList<Moveable>();
         this.road = road;
     }
 
@@ -83,7 +83,7 @@ public class CarSink implements CarContainer {
             totalTime += car.getLifetime();
         }
 
-        CopyOnWriteArrayList<Double> result = new CopyOnWriteArrayList<>();
+        CopyOnWriteArrayList<Double> result = new CopyOnWriteArrayList<Double>();
         result.add(totalDistance);
         result.add(totalTime);
         result.add((double) cars.size());
