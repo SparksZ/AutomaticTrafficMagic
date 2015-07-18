@@ -68,7 +68,7 @@ public class Visualization extends Application {
     private void loadgame() {
         intersections = new CopyOnWriteArrayList<>();
 
-        createIntersections(5, 1);
+        createIntersections(3, 1);
         connectIntersections();
         simulationTime = 7200;
         cars = new CopyOnWriteArrayList<>();

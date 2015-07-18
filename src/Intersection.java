@@ -23,7 +23,7 @@ public class Intersection implements Updateable, CarContainer {
     private double nSLightLength;
     private double eWLightLength;
     private final double speedLimit = 12;
-    private final int secondsPerCar = 5;
+    private final int secondsPerCar = 10;
     public static final double length = 75; // length of intersection (m)
     public static final double roadLength = 200;
     public static final double roadWidth = 15;

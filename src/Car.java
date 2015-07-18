@@ -25,7 +25,7 @@ public class Car implements Moveable {
     private boolean nS; // specifies if the car is traveling north/south or not
                         // (east/west)
     int direction; // -1 for north/west +1 for south/east
-    private Random r = new Random(1);
+    private Random r = new Random();
 
     private Pane Layer;
 
