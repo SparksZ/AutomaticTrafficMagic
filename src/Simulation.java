@@ -1,7 +1,8 @@
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Callable;
 import java.util.Arrays;
 
-public class Simulation implements Runnable {
+public class Simulation implements Callable<Results> {
 
     private CopyOnWriteArrayList<Intersection> intersections;
     private CopyOnWriteArrayList<Double> results;
@@ -11,12 +12,13 @@ public class Simulation implements Runnable {
     private final double simulationTime;
     private final double TIME_STEP = 1;
     private byte[][] lightTimingData;
+    private int simulationID; // for running many simulations in batch
 
-
-    public Simulation (int numIntersectionsPerSide, int simulationLength, byte[][] lightTimingData) {
+    public Simulation (int numIntersectionsPerSide, int simulationLength, byte[][] lightTimingData, int simulationID) {
         this.numIntersectionsPerSide = numIntersectionsPerSide;
         this.simulationTime = simulationLength;
         this.lightTimingData = lightTimingData;
+        this.simulationID = simulationID;
 
         // init variables
         intersections = new CopyOnWriteArrayList<Intersection>();
@@ -27,7 +29,15 @@ public class Simulation implements Runnable {
         connectIntersections();
     }
 
-    public double runSim() {
+    public Simulation (int numIntersectionsPerSide, int simulationLength, byte[][] lightTimingData) {
+        this(numIntersectionsPerSide, simulationLength, lightTimingData, 0);
+    }
+
+    public Results call() {
+        return runSim();
+    }
+
+    public Results runSim() {
         while (timeElapsed < simulationTime) {
             updateSim();
             // int checkpointTimeStep = (int)(simulationTime/20);
@@ -35,9 +45,8 @@ public class Simulation implements Runnable {
             //     System.out.println(timeElapsed / simulationTime * 100 + "% \r");
             // }
         }
-        return averageSpeed();
-        //System.out.println("The average speed of the cars was: " +
-        //        averageSpeed() + " m/s. averaging over " + results.get(2) + " cars");
+        averageSpeed();
+        return new Results(results.get(0), results.get(1), results.get(2), simulationID);
     }
 
     public void run() {
@@ -51,8 +60,8 @@ public class Simulation implements Runnable {
         sb.append("]");
         System.out.println(Thread.currentThread().getName() + " Start.");
         System.out.println("Input vector: " + sb.toString());
-        double averageSpeed = runSim();
-        System.out.println(Thread.currentThread().getName() + " End. avgSpeed = " + averageSpeed);
+        Results r = runSim();
+        System.out.println(Thread.currentThread().getName() + " End. avgSpeed = " + r.AVERAGE_SPEED);
     }
 
     public void updateSim() {
@@ -207,6 +216,10 @@ public class Simulation implements Runnable {
 
     public double getSimulationTime() {
         return simulationTime;
+    }
+
+    public int getSimulationID() {
+        return simulationID;
     }
 
     //TODO: make non-static
