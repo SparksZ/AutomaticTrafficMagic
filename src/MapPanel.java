@@ -147,10 +147,10 @@ public class MapPanel extends JPanel {
                     }
                     else {
                         if (c.getDirection() > 0) {
-                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() - (3 * vizRoadWidth / 4)) - 1, 3, 3);
+                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() + (3 * vizRoadWidth / 4)) - 1, 3, 3);
                         }
                         else {
-                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() + (3 * vizRoadWidth / 4)) - 1, 3, 3);
+                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() - (3 * vizRoadWidth / 4)) - 1, 3, 3);
                         }
                     }
                 }
@@ -175,10 +175,10 @@ public class MapPanel extends JPanel {
                     }
                     else {
                         if (c.getDirection() > 0) {
-                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() - (3 * vizRoadWidth / 4)) - 1, 3, 3);
+                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() + (3 * vizRoadWidth / 4)) - 1, 3, 3);
                         }
                         else {
-                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() + (3 * vizRoadWidth / 4)) - 1, 3, 3);
+                            g2.fillOval(panelX(c.getXPosition()) - 1, panelY(c.getYPosition() - (3 * vizRoadWidth / 4)) - 1, 3, 3);
                         }
                     }
                 }
