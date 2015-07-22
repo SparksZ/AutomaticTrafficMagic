@@ -110,8 +110,8 @@ public class Car implements Moveable {
      * @return the acceleration of this car based on the car in front of it
      */
     private double dVdT() {
-        return acceleration * (1 - Math.pow((velocity / desiredV), 4) -
-                (sStar() / leadingCarGap()));
+        return Math.max(0, acceleration * (1 - Math.pow((velocity / desiredV),
+                4) - (sStar() / leadingCarGap())));
     }
 
     /**
