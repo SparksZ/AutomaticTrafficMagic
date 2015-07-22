@@ -75,9 +75,15 @@ public class SimulationPanel extends JPanel implements ActionListener {
                 }
                 mySim.updateSim();
                 iterationsSincePaint++;
+                try {
+    				Thread.sleep(100 - (System.currentTimeMillis() % 100));
+    			} catch (InterruptedException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
                 setProgress((int)(100*sim.getTimeElapsed()/sim.getSimulationTime()));
                 buttonsAndSuch.progressBar.setValue(getProgress());
-                if (iterationsSincePaint == 100) {
+                if (iterationsSincePaint == 1) {
                     repaint();
                     iterationsSincePaint = 0;
                 }

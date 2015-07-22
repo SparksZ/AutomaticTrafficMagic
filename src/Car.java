@@ -29,7 +29,7 @@ public class Car implements Moveable {
     public static final double timeHeadway = 1.5; // seconds between cars
                                                   // desired (might need to be
                                                   // lower for city driving)
-    public static final double minimumGap = 2.0; // meters between cars at
+    public static final double minimumGap = 8.0; // meters between cars at
                                                  // standstill
     public static final long SEED = 0x89bb4d51;
 

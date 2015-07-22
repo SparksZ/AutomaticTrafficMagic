@@ -16,7 +16,7 @@ public class Driver {
     private static double timeElapsed;
     private static CopyOnWriteArrayList<Double> results;
     private static double simulationTime;
-    private static int numIntersectionsPerSide = 3;
+    private static int numIntersectionsPerSide = 2;
     private static int numIntersections = (int)Math.pow(numIntersectionsPerSide, 2);
     private static int finalMapSize = (int)((numIntersectionsPerSide + 1)*(Intersection.length + Intersection.roadLength) + Intersection.length*(numIntersectionsPerSide - 1));
     private static Simulation[] sims;
@@ -36,12 +36,12 @@ public class Driver {
     public static final int NUM_GENERATIONS = 1;
     public static final int SURVIVORS_PER_GENERATION = 2;
     public static final int INDIVIDUALS_TO_CLONE = 2;
-    public static final int SIMULATION_TIME = 7200;
+    public static final int SIMULATION_TIME = 315;
     // public static final double INITIAL_MUTATION_P = 0.75;
     public static final double INITIAL_MUTATION_P = 0.2;
     public static final double MUTATION_DECAY_RATE = 0.982;
 
-    public static void main(String[] args) {
+    public static void newMain(String[] args) {
         // start with random chromosomes
         Random prng = new Random();
         mutationProb = INITIAL_MUTATION_P;
@@ -164,8 +164,8 @@ public class Driver {
         executor.shutdown();
     }
 
-    public static void oldMain(String[] args) {
-        Random prng = new Random();
+    public static void main(String[] args) {
+        Random prng = new Random(2);
         byte[][] lightData = new byte[numIntersections][PERIOD];
         for (int j = 0; j < numIntersections; j++) {
             for (int k = 0; k < PERIOD; k++) {
@@ -174,7 +174,7 @@ public class Driver {
         }
         Simulation sim1 = new Simulation(numIntersectionsPerSide, SIMULATION_TIME, lightData);
         JFrame simulatorWindow = new JFrame("Automatic Traffic Magic");
-        SimulationPanel drawingPanel = new SimulationPanel(sim1, 500);
+        SimulationPanel drawingPanel = new SimulationPanel(sim1, 1000);
         simulatorWindow.add(drawingPanel);
         simulatorWindow.pack();
         simulatorWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -24,7 +24,7 @@ public class Intersection implements Updateable, CarContainer {
 
 
     // CONSTANTS
-    private final double timeBetweenStates = 400;
+    private final double timeBetweenStates = 10;
     private final double speedLimit = 16;
     private final int secondsPerCar = 5;
     public static final double length = 75; // length of intersection (m)
@@ -392,8 +392,8 @@ public class Intersection implements Updateable, CarContainer {
             Road in = new Road(speedLimit, roadLength, this, xPos, yPos -
                     length - roadLength, true, true, false); // North In
 
-            CarFactory f = new CarFactory(in, secondsPerCar);
-            factories.add(f);
+            //CarFactory f = new CarFactory(in, secondsPerCar);
+            //factories.add(f);
             roads.set(0, in);
 
             // out road
@@ -419,8 +419,8 @@ public class Intersection implements Updateable, CarContainer {
             Road in = new Road(speedLimit, roadLength, this, xPos + length,
                     yPos, false, false, false);
 
-            CarFactory f = new CarFactory(in, secondsPerCar);
-            factories.add(f);
+            //CarFactory f = new CarFactory(in, secondsPerCar);
+            //factories.add(f);
             roads.set(1, in);
 
             // out road
@@ -441,9 +441,11 @@ public class Intersection implements Updateable, CarContainer {
             // in road
             Road in = new Road(speedLimit, roadLength, this, xPos, yPos +
                     length, true, false, false);
-
-            CarFactory f = new CarFactory(in, secondsPerCar);
-            factories.add(f);
+            
+            if(sinkScenario == 4){
+            	CarFactory f = new CarFactory(in, secondsPerCar);
+            	factories.add(f);
+            }
             roads.set(2, in);
 
             // out road
@@ -465,8 +467,8 @@ public class Intersection implements Updateable, CarContainer {
             Road in = new Road(speedLimit, roadLength, this, xPos - length -
                     roadLength, yPos, false, true, false);
 
-            CarFactory f = new CarFactory(in, secondsPerCar);
-            factories.add(f);
+            //CarFactory f = new CarFactory(in, secondsPerCar);
+            //factories.add(f);
             roads.set(3, in);
 
             // out road

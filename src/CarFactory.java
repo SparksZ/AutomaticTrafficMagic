@@ -20,7 +20,7 @@ public class CarFactory implements Updateable {
      */
     public void update(int timeElapsed) {
         int deltaT = timeElapsed - lastUpdateTime;
-        if (deltaT >= secondsPerCar) {
+        if (deltaT >= secondsPerCar & carsMade < 2) {
             if (!road.isFull()) {
                 makeCar(timeElapsed);
             }
@@ -40,7 +40,7 @@ public class CarFactory implements Updateable {
         int dir = (carFacts.get(2) > 0) ? 1 : -1;
         Car car = new Car(carFacts.get(0), carFacts.get(1), newLC.getVelocity(),
                 road, newLC, road.isNS(), dir,
-                timeElapsed, newCarID);
+                timeElapsed, 0);
         road.addCar(car);
         carsMade++;
     }
