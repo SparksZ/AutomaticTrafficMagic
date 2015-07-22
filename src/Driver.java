@@ -41,7 +41,7 @@ public class Driver {
     public static final double INITIAL_MUTATION_P = 0.2;
     public static final double MUTATION_DECAY_RATE = 0.982;
 
-    public static void main(String[] args) {
+    public static void oldMain(String[] args) {
         // start with random chromosomes
         Random prng = new Random();
         mutationProb = INITIAL_MUTATION_P;
@@ -164,7 +164,7 @@ public class Driver {
         executor.shutdown();
     }
 
-    public static void oldMain(String[] args) {
+    public static void main(String[] args) {
         Random prng = new Random();
         byte[][] lightData = new byte[numIntersections][PERIOD];
         for (int j = 0; j < numIntersections; j++) {
