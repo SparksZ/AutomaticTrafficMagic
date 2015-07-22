@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Intersection implements Updateable, CarContainer {
@@ -29,6 +30,14 @@ public class Intersection implements Updateable, CarContainer {
     private final int secondsPerCar = 5;
     public static final double length = 75; // length of intersection (m)
     public static final double roadLength = 200;
+    public static HashMap<Byte, Byte> inOutMap;
+    static {
+        inOutMap = new HashMap<>();
+        inOutMap.put((byte) 0, (byte) 6);
+        inOutMap.put((byte) 1, (byte) 7);
+        inOutMap.put((byte) 2, (byte) 4);
+        inOutMap.put((byte) 3, (byte) 5);
+    }
 
     /**
      * Instantiates a new intersection.  This creates all roads north and west
@@ -154,7 +163,11 @@ public class Intersection implements Updateable, CarContainer {
             currGreenLight = lightList[lightIndex];
             if (prevGreenLight != currGreenLight) {
                 queues.get(prevGreenLight).set(0, new DummyCar(xPos, yPos));
-                queues.get(currGreenLight).set(0, new DummyCar(100000,100000));
+                if (!roads.get(inOutMap.get(currGreenLight)).isFull()) {
+                // If the next road is full, don't update with infinite dummy
+                    queues.get(currGreenLight).set(0, new DummyCar(100000,
+                            100000));
+                }
                 changed = true;
             }
             timeSinceStateChange = 0;
