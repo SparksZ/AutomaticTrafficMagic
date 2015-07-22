@@ -22,7 +22,7 @@ public class Intersection implements Updateable, CarContainer {
     // CONSTANTS
     private double nSLightLength;
     private double eWLightLength;
-    private final double speedLimit = 12;
+    private final double speedLimit = 16;
     private final int secondsPerCar = 10;
     public static final double length = 75; // length of intersection (m)
     public static final double roadLength = 200;
@@ -149,9 +149,13 @@ public class Intersection implements Updateable, CarContainer {
 
             // Updating Dummies
             queues.get(0).set(0, new DummyCar(xPos, yPos - roadWidth)); // North In
-            queues.get(1).set(0, roads.get(7).getLast()); // East In
+            if (!roads.get(7).isFull()) {
+                queues.get(1).set(0, roads.get(7).getLast()); // East In
+            }
             queues.get(2).set(0, new DummyCar(xPos, yPos + roadWidth)); // South In
-            queues.get(3).set(0, roads.get(5).getLast()); // West In
+            if (!roads.get(5).isFull()) {
+                queues.get(3).set(0, roads.get(5).getLast()); // West In
+            }
 
             state = false;
             lastLightStart = Visualization.getTimeElapsed();
@@ -162,9 +166,13 @@ public class Intersection implements Updateable, CarContainer {
                 eWLightLength) { // NS light needs to change to green
 
             // Updating Dummies
-            queues.get(0).set(0, roads.get(6).getLast()); // North in green
+            if (!roads.get(6).isFull()) {
+                queues.get(0).set(0, roads.get(6).getLast()); // North in green
+            }
             queues.get(1).set(0, new DummyCar(xPos, yPos)); // East in red
-            queues.get(2).set(0, roads.get(4).getLast()); // South in green
+            if (!roads.get(4).isFull()) {
+                queues.get(2).set(0, roads.get(4).getLast()); // South in green
+            }
             queues.get(3).set(0, new DummyCar(xPos - roadWidth, yPos)); // West in red
 
             state = true;
@@ -246,9 +254,9 @@ public class Intersection implements Updateable, CarContainer {
                         if (q.size() > 1) {
                             q.get(1).setLeadingCar(q.get(0));
                         } else {
-                            /* If the preceding road is empty don't need to set
-                               the last lead's car
-                             */
+                        /* If the preceding road is empty don't need to set
+                           the last lead's car
+                         */
                             if (!roads.get(i).getCars().isEmpty()) {
                                 roads.get(i).getFirst().
                                         setLeadingCar(q.get(0));

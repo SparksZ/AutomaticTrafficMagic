@@ -366,4 +366,8 @@ public class Road implements Updateable {
 
         return false;
     }
+
+    public boolean hasRealCar() {
+        return cars.size() > 0;
+    }
 }
