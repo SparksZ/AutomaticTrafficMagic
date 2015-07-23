@@ -32,7 +32,7 @@ public class Driver {
     public static final double frameRate = .5; // seconds
     public static final int paintRate = 10; // milliseconds
     public static final int PERIOD = 64;
-    public static final int POPULATION_SIZE = 8; // 20;
+    public static final int POPULATION_SIZE = 8;
     public static final int NUM_GENERATIONS = 5;
     public static final int SURVIVORS_PER_GENERATION = 4;
     public static final int INDIVIDUALS_TO_CLONE = 2;
@@ -91,6 +91,7 @@ public class Driver {
             // perform crossover
             // perform mutation
             byte[][][] nextGeneration = new byte[POPULATION_SIZE][numIntersections][PERIOD];
+            chromosomes = new byte[POPULATION_SIZE][numIntersections*PERIOD];
             // randomly sample and do crossovers over random ranges
             for (int childNum = 0; childNum < nextGeneration.length - INDIVIDUALS_TO_CLONE; childNum++) {
                 // System.out.println("generating child " + childNum);
@@ -113,6 +114,7 @@ public class Driver {
                     else {
                         child[i] = parent1Chromosome[i];
                     }
+                    chromosomes[childNum][i] = child[i];
                     nextGeneration[childNum][i/PERIOD][i % PERIOD] = child[i];
                 }
                 for (int i = crossoverStart; i <= crossoverEnd; i++) {
@@ -122,6 +124,7 @@ public class Driver {
                     else {
                         child[i] = parent2Chromosome[i];
                     }
+                    chromosomes[childNum][i] = child[i];
                     nextGeneration[childNum][i/PERIOD][i % PERIOD] = child[i];
                 }
                 for (int i = crossoverEnd + 1; i < child.length; i++) {
@@ -131,6 +134,7 @@ public class Driver {
                     else {
                         child[i] = parent1Chromosome[i];
                     }
+                    chromosomes[childNum][i] = child[i];
                     nextGeneration[childNum][i/PERIOD][i % PERIOD] = child[i];
                 }
                 // System.out.println("Child " + (childNum + 1) + ": " + lightDataToString(nextGeneration[childNum]));
@@ -146,10 +150,13 @@ public class Driver {
                 nextGeneration[newIndex] = bestIndividuals[i];
                 // System.out.println("Clone " + (i + 1) + "(index " + newIndex +  "): " + lightDataToString(bestIndividuals[i]));
             }
+            generationResults = new ArrayList<Results>(POPULATION_SIZE);
+            sims = new Simulation[POPULATION_SIZE];
+            futureGenResults = new ArrayList<Future<Results>>(POPULATION_SIZE);
             // run simulation
             for (int i = 0; i < sims.length; i++) {
                 sims[i] = new Simulation(numIntersectionsPerSide, SIMULATION_TIME, nextGeneration[i], gen*i);
-                futureGenResults.set(i, executor.submit(sims[i]));
+                futureGenResults.add(i, executor.submit(sims[i]));
             }
             System.out.println("Executing simulation in generation " + gen + "...");
             for (int i = 0; i < futureGenResults.size(); i++) {
@@ -157,7 +164,8 @@ public class Driver {
                 Results r = null;
                 try {
                     r = fr.get();
-                    generationResults.set(i, r);
+                    generationResults.add(i, r);
+                    // System.out.println(lightDataToString(nextGeneration[i]));
                     System.out.println("Individual " + i + " average speed: " + r.AVERAGE_SPEED);
                 } catch (Exception e) {
                     e.printStackTrace();
